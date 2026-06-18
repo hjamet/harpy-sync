@@ -9,5 +9,6 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["DOM", "ES2022"]
   },
-  "include": ["main.ts"]
+  "include": ["main.ts", "src/**/*.ts"]
 }
+
