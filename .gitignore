@@ -1,0 +1,30 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+main.js
+styles.css
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Agent files that shouldn't be committed (optional, but keep .agents/ since it contains agent customizations)
+.agents/scratch/
+.agents/logs/
+.agents/tmp/
