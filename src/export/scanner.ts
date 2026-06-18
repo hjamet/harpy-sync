@@ -1,6 +1,7 @@
 import { App, TFile, TFolder } from "obsidian";
 import { Entity, Page, Chunk, RandomTable, Tag, Variable, Asset, BeyondPaper } from "../types";
 import { stripFrontmatter } from "../import/markdown-builder";
+import { sanitizeFileName } from "../import/parser";
 
 function generateUid(): string {
   return Math.random().toString(36).substring(2, 12);
@@ -290,10 +291,10 @@ export class VaultScanner {
         flushText();
         const assetUids: string[] = [];
         for (const imgName of imagesInLine) {
-          let asset = assets.find((a) => a.name === imgName || a.uid === imgName);
+          let asset = assets.find((a) => a.name === imgName || a.uid === imgName) as Asset | undefined;
           if (!asset) {
             const assetUid = generateUid();
-            asset = {
+            const newAsset: Asset = {
               uid: assetUid,
               name: imgName,
               type: "image",
@@ -301,10 +302,12 @@ export class VaultScanner {
               thumbnailUrl: imgName,
               dimensions: { width: 0, height: 0 }
             } as any;
-            assets.push(asset);
+            assets.push(newAsset);
+            asset = newAsset;
           }
           assetUids.push(asset.uid);
         }
+
 
         chunks.push({
           uid: generateUid(),
