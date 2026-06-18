@@ -14,7 +14,7 @@ const DEFAULT_SETTINGS: HarpySyncSettings = {
 };
 
 export default class HarpySyncPlugin extends Plugin {
-  settings: HarpySyncSettings;
+  declare settings: HarpySyncSettings;
 
   async onload() {
     await this.loadSettings();
