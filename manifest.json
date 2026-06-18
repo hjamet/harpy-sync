@@ -1,0 +1,10 @@
+{
+  "id": "harpy-sync",
+  "name": "Harpy Sync",
+  "version": "0.0.1",
+  "minAppVersion": "0.15.0",
+  "description": "Import and export campaign notes to/from harpy.gg using the .bypp format.",
+  "author": "hjamet",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}
