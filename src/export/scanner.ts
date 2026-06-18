@@ -2,6 +2,8 @@ import { App, TFile, TFolder } from "obsidian";
 import { Entity, Page, Chunk, RandomTable, Tag, Variable, Asset, BeyondPaper } from "../types";
 import { stripFrontmatter } from "../import/markdown-builder";
 import { sanitizeFileName } from "../import/parser";
+import { BYPP_FORMAT_VERSION } from "bypp-format";
+
 
 function generateUid(): string {
   return Math.random().toString(36).substring(2, 12);
@@ -146,7 +148,7 @@ export class VaultScanner {
         description: description.replace(/!\[\[.*?\]\]\n?/, "").trim(), // Strip profile img embed from description
         tagsUid,
         type: entityType,
-        originalUrl: profileUrl,
+        originalUrl: profileUrl.startsWith("http") ? profileUrl : undefined,
         pagesOrder,
         data: entityData,
         assetUids: []
@@ -154,11 +156,16 @@ export class VaultScanner {
     }
 
     return {
-      version: 2,
+      version: BYPP_FORMAT_VERSION,
       format: "bypp",
       name: campaignName,
       exportedAt: new Date().toISOString(),
       bundleVersion: "1.0.0",
+      license: "ARR",
+      licenseVersion: "4.0",
+      attribution: {
+        authorName: "Obsidian Export"
+      },
       entities,
       pages,
       chunks,
@@ -222,10 +229,7 @@ export class VaultScanner {
             uid: generateUid(),
             name: "",
             type: "text",
-            content: textContent,
-            blockStyle: {},
-            headingLevel: 0,
-            headingMode: "none"
+            content: textContent
           } as any);
         }
         currentTextLines = [];
@@ -276,10 +280,7 @@ export class VaultScanner {
           name: tableTitle,
           type: "random",
           randomTableUid: tableUid,
-          folded: false,
-          blockStyle: {},
-          headingLevel: 0,
-          headingMode: "none"
+          folded: false
         } as any);
         continue;
       }
@@ -294,12 +295,13 @@ export class VaultScanner {
           let asset = assets.find((a) => a.name === imgName || a.uid === imgName) as Asset | undefined;
           if (!asset) {
             const assetUid = generateUid();
+            const isUrl = imgName.startsWith("http");
             const newAsset: Asset = {
               uid: assetUid,
               name: imgName,
               type: "image",
-              originalUrl: imgName,
-              thumbnailUrl: imgName,
+              originalUrl: isUrl ? imgName : undefined,
+              thumbnailUrl: isUrl ? imgName : undefined,
               dimensions: { width: 0, height: 0 }
             } as any;
             assets.push(newAsset);
@@ -313,10 +315,7 @@ export class VaultScanner {
           uid: generateUid(),
           name: "Gallery",
           type: "gallery",
-          assetUids,
-          blockStyle: {},
-          headingLevel: 0,
-          headingMode: "none"
+          assetUids
         } as any);
 
         i++;
