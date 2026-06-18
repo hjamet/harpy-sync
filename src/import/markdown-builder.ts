@@ -175,7 +175,14 @@ export class MarkdownBuilder {
           for (const assetUid of chunk.assetUids) {
             const asset = this.index.assets.get(assetUid);
             if (asset) {
-              const url = asset.originalUrl || asset.thumbnailUrl;
+              let url = "";
+              if (asset.type === "image") {
+                url = asset.originalUrl || asset.thumbnailUrl || "";
+              } else if (asset.type === "video") {
+                url = asset.videoUrl || "";
+              } else if (asset.type === "audio") {
+                url = asset.audioUrl || "";
+              }
               if (url) {
                 const localPath = await this.assetManager.downloadUrl(url, asset.name || "gallery_asset");
                 if (localPath) {
