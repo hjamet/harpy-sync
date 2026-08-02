@@ -28,3 +28,11 @@ Thumbs.db
 .agents/scratch/
 .agents/logs/
 .agents/tmp/
+
+# Temporary test scripts and outputs
+test-output.bypp
+test-vault/
+scratch-test/
+run_import_vault.*
+test_import_export.ts
+

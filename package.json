@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "dev": "esbuild main.ts --bundle --external:obsidian --outfile=main.js --format=cjs --target=es2022 --platform=node --sourcemap --watch",
-    "build": "esbuild main.ts --bundle --external:obsidian --outfile=main.js --format=cjs --minify --target=es2022 --platform=node"
+    "build": "esbuild main.ts --bundle --external:obsidian --outfile=main.js --format=cjs --minify --target=es2022 --platform=node",
+    "version": "node version-bump.mjs"
   },
   "keywords": [
     "obsidian",

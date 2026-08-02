@@ -17,6 +17,34 @@ export function stripFrontmatter(content: string): string {
 }
 
 /**
+ * Strips visual HTML tags (spans, fonts, styles, inline CSS attributes, etc.)
+ * while keeping clean Markdown structure and text content.
+ */
+export function stripVisualHtml(content: string): string {
+  if (!content) return "";
+  let text = content;
+
+  // 1. Remove <style> and <script> blocks completely (with inner content)
+  text = text.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "");
+  text = text.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+
+  // 2. Convert HTML block/break elements to clean line breaks
+  text = text.replace(/<br\s*\/?>/gi, "\n");
+  text = text.replace(/<\/?(p|div)\b[^>]*>/gi, "\n");
+
+  // 3. Strip visual wrapper tags (span, font, center, mark) preserving inner text
+  text = text.replace(/<\/?(span|font|center|mark)\b[^>]*>/gi, "");
+
+  // 4. Strip visual style/class attributes from any remaining HTML elements
+  text = text.replace(/\s*(?:style|class|color|bgcolor|align|face|size)=(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+
+  // 5. Clean up excessive newlines resulting from tag replacements
+  text = text.replace(/\n{3,}/g, "\n\n").trim();
+
+  return text;
+}
+
+/**
  * Resolves internal Harpy links to native Obsidian wikilinks.
  */
 export function resolveEntityLinks(text: string, index: BundleIndex): string {
@@ -51,6 +79,8 @@ export class MarkdownBuilder {
   app: App;
   index: BundleIndex;
   assetManager: AssetManager;
+  // Map of written file paths to entity UIDs to prevent filename collisions
+  usedPaths = new Map<string, string>();
 
   constructor(app: App, index: BundleIndex, assetManager: AssetManager) {
     this.app = app;
@@ -59,21 +89,62 @@ export class MarkdownBuilder {
   }
 
   /**
+   * Writes global campaign metadata manifest file (_harpy_manifest.json) into vault.
+   */
+  async writeManifestFile(folderPath: string): Promise<void> {
+    const manifestPath = folderPath ? `${folderPath}/_harpy_manifest.json` : "_harpy_manifest.json";
+    const manifestData = {
+      version: this.index.bundle.version,
+      format: this.index.bundle.format,
+      name: this.index.bundle.name,
+      exportedAt: this.index.bundle.exportedAt,
+      bundleVersion: this.index.bundle.bundleVersion,
+      license: this.index.bundle.license,
+      licenseVersion: this.index.bundle.licenseVersion,
+      attribution: this.index.bundle.attribution,
+      variables: this.index.bundle.variables || [],
+      tags: this.index.bundle.tags || [],
+      tagCategories: this.index.bundle.tagCategories || [],
+      sheets: this.index.bundle.sheets || [],
+      dataTables: this.index.bundle.dataTables || [],
+      scenes: this.index.bundle.scenes || [],
+      sceneMaps: this.index.bundle.sceneMaps || [],
+      sceneBackgrounds: this.index.bundle.sceneBackgrounds || [],
+      widgets: this.index.bundle.widgets || []
+    };
+
+    await this.assetManager.ensureFolderExists(folderPath);
+    const content = JSON.stringify(manifestData, null, 2);
+    const existingFile = this.app.vault.getAbstractFileByPath(manifestPath);
+    if (existingFile instanceof TFile) {
+      await this.app.vault.modify(existingFile, content);
+    } else {
+      await this.app.vault.create(manifestPath, content);
+    }
+  }
+
+  /**
    * Generates the complete Markdown string for an entity.
    */
   async buildEntityMarkdown(entity: Entity): Promise<string> {
     const lines: string[] = [];
 
+    const exportedAt = this.index.bundle.exportedAt || new Date().toISOString();
+    const displayName = entity.displayName || entity.name;
+
     // 1. Generate YAML Frontmatter
     const frontmatter: Record<string, any> = {
       "harpy-uid": entity.uid,
-      "harpy-last-sync": this.index.bundle.exportedAt,
+      "uid": entity.uid,
+      displayName: displayName,
+      "harpy-last-sync": exportedAt,
+      "lastSync": exportedAt,
       type: entity.type,
       tags: this.index.getEntityTagNames(entity),
     };
 
-    // Flatten variables in frontmatter
     if (entity.data && typeof entity.data === "object") {
+      frontmatter["harpy-data"] = entity.data;
       const flatVars: Record<string, any> = {};
       for (const [varUid, value] of Object.entries(entity.data)) {
         const variable = this.index.variables.get(varUid);
@@ -95,7 +166,6 @@ export class MarkdownBuilder {
     lines.push("");
 
     // 2. Add Title
-    const displayName = entity.displayName || entity.name;
     lines.push(`# ${displayName}`);
     lines.push("");
 
@@ -110,8 +180,11 @@ export class MarkdownBuilder {
     }
 
     if (entity.description) {
-      lines.push(resolveEntityLinks(entity.description, this.index));
-      lines.push("");
+      const cleanDesc = resolveEntityLinks(stripVisualHtml(entity.description), this.index);
+      if (cleanDesc) {
+        lines.push(cleanDesc);
+        lines.push("");
+      }
     }
 
     // 4. Render Pages & Chunks
@@ -131,17 +204,20 @@ export class MarkdownBuilder {
    * Renders a single Page and its Chunks.
    */
   private async renderPage(page: Page, lines: string[]): Promise<void> {
-    // We only render standard pages; entity pages are handled differently
-    if (page.type === "standard") {
+    const nameAttr = page.name ? ` name="${encodeURIComponent(page.name)}"` : "";
+    const typeAttr = page.type ? ` type="${page.type}"` : "";
+    lines.push(`<!-- harpy:page uid="${page.uid}"${nameAttr}${typeAttr} -->`);
+
+    if (page.name) {
       lines.push(`# ${page.name}`);
       lines.push("");
+    }
 
-      if (page.chunksOrder) {
-        for (const chunkUid of page.chunksOrder) {
-          const chunk = this.index.chunks.get(chunkUid);
-          if (chunk) {
-            await this.renderChunk(chunk, lines);
-          }
+    if (page.chunksOrder) {
+      for (const chunkUid of page.chunksOrder) {
+        const chunk = this.index.chunks.get(chunkUid);
+        if (chunk) {
+          await this.renderChunk(chunk, lines);
         }
       }
     }
@@ -151,25 +227,34 @@ export class MarkdownBuilder {
    * Renders a single Chunk.
    */
   private async renderChunk(chunk: Chunk, lines: string[]): Promise<void> {
-    switch (chunk.type) {
-      case "text":
-        if (chunk.content) {
-          lines.push(resolveEntityLinks(chunk.content, this.index));
-          lines.push("");
-        }
-        break;
+    const nameAttr = chunk.name ? ` name="${encodeURIComponent(chunk.name)}"` : "";
+    const typeAttr = ` type="${chunk.type}"`;
+    lines.push(`<!-- harpy:chunk uid="${chunk.uid}"${typeAttr}${nameAttr} -->`);
 
-      case "textProxy":
-        // Look up target chunk
+    switch (chunk.type) {
+      case "text": {
+        if (chunk.content) {
+          const cleanText = resolveEntityLinks(stripVisualHtml(chunk.content), this.index);
+          if (cleanText) {
+            lines.push(cleanText);
+          }
+        }
+        lines.push("");
+        break;
+      }
+
+      case "textProxy": {
         if (chunk.chunkUid) {
           const targetChunk = this.index.chunks.get(chunk.chunkUid);
           if (targetChunk) {
-            await this.renderChunk(targetChunk, lines);
+            await this.renderChunkContent(targetChunk, lines);
           }
         }
+        lines.push("");
         break;
+      }
 
-      case "gallery":
+      case "gallery": {
         if (chunk.assetUids && chunk.assetUids.length > 0) {
           const galleryLines: string[] = [];
           for (const assetUid of chunk.assetUids) {
@@ -193,19 +278,51 @@ export class MarkdownBuilder {
           }
           if (galleryLines.length > 0) {
             lines.push(galleryLines.join(" "));
-            lines.push("");
           }
         }
+        lines.push("");
         break;
+      }
 
-      case "random":
+      case "random": {
         if (chunk.randomTableUid) {
           const table = this.index.randomTables.get(chunk.randomTableUid);
           if (table) {
             this.renderRandomTable(table, lines);
           }
         }
+        lines.push("");
         break;
+      }
+
+      default: {
+        if (chunk.content) {
+          const cleanText = resolveEntityLinks(stripVisualHtml(chunk.content), this.index);
+          if (cleanText) {
+            lines.push(cleanText);
+          }
+        }
+        lines.push("");
+        break;
+      }
+    }
+  }
+
+  /**
+   * Helper to render the inner content of a target chunk (e.g. for textProxy).
+   */
+  private async renderChunkContent(chunk: Chunk, lines: string[]): Promise<void> {
+    if (chunk.type === "text" && chunk.content) {
+      const cleanText = resolveEntityLinks(stripVisualHtml(chunk.content), this.index);
+      if (cleanText) {
+        lines.push(cleanText);
+        lines.push("");
+      }
+    } else if (chunk.type === "random" && chunk.randomTableUid) {
+      const table = this.index.randomTables.get(chunk.randomTableUid);
+      if (table) {
+        this.renderRandomTable(table, lines);
+      }
     }
   }
 
@@ -219,11 +336,10 @@ export class MarkdownBuilder {
     lines.push(`> | --- | --- |`);
 
     if (table.rows) {
-      // Sort rows by range roll if they are numbers
       const sortedRows = [...table.rows].sort((a, b) => (a.range ?? 0) - (b.range ?? 0));
       for (const row of sortedRows) {
         const rollStr = row.range !== undefined ? row.range.toString() : "-";
-        const content = row.content ? resolveEntityLinks(row.content, this.index).replace(/\n/g, " ") : "";
+        const content = row.content ? resolveEntityLinks(stripVisualHtml(row.content), this.index).replace(/\n/g, " ") : "";
         lines.push(`> | ${rollStr} | ${content} |`);
       }
     }
@@ -231,60 +347,28 @@ export class MarkdownBuilder {
   }
 
   /**
-   * Writes the entity to a vault markdown file, handling conflict resolution if required.
+   * Writes the entity to a vault markdown file, resolving filename collisions if required.
    */
   async writeEntityFile(entity: Entity, folderPath: string): Promise<void> {
-    const fileName = `${sanitizeFileName(entity.displayName || entity.name)}.md`;
-    const filePath = folderPath ? `${folderPath}/${fileName}` : fileName;
+    const baseName = sanitizeFileName(entity.displayName || entity.name);
+    let fileName = `${baseName}.md`;
+    let filePath = folderPath ? `${folderPath}/${fileName}` : fileName;
 
-    // Check if parent directory exists, if not create it
+    // Resolve file name collisions for different entities
+    if (this.usedPaths.has(filePath) && this.usedPaths.get(filePath) !== entity.uid) {
+      fileName = `${baseName}_${entity.uid}.md`;
+      filePath = folderPath ? `${folderPath}/${fileName}` : fileName;
+    }
+    this.usedPaths.set(filePath, entity.uid);
+
     await this.assetManager.ensureFolderExists(folderPath);
 
     const newContent = await this.buildEntityMarkdown(entity);
     const existingFile = this.app.vault.getAbstractFileByPath(filePath);
 
     if (existingFile instanceof TFile) {
-      // Check for conflict
-      const cache = this.app.metadataCache.getFileCache(existingFile);
-      const lastSyncStr = cache?.frontmatter?.["harpy-last-sync"];
-      const fileMtime = existingFile.stat.mtime;
-
-      if (lastSyncStr) {
-        const lastSyncTime = Date.parse(lastSyncStr);
-        // If file modified locally (allow a 2 second buffer for fs latency)
-        if (!isNaN(lastSyncTime) && fileMtime > lastSyncTime + 2000) {
-          // Sync Conflict: Keep both versions
-          console.warn(`Harpy Sync: Conflict detected in note "${filePath}". Keep both versions.`);
-          const existingText = await this.app.vault.read(existingFile);
-          const localTextClean = stripFrontmatter(existingText);
-
-          // Construct merged note
-          const mergedLines: string[] = [];
-          
-          // Put the new YAML frontmatter at the very top (so Obsidian metadata matches the new synced state)
-          const newFrontmatterOnly = newContent.match(/^---[\s\S]*?---/)?.[0] || "";
-          const newContentClean = stripFrontmatter(newContent);
-
-          mergedLines.push(newFrontmatterOnly);
-          mergedLines.push("");
-          mergedLines.push("> [!warning] Sync Conflict");
-          mergedLines.push("> This note was modified both locally in Obsidian and on Harpy.gg. Both versions have been preserved below. Please resolve conflicts and clean this up.");
-          mergedLines.push("");
-          mergedLines.push("=== HARPY VERSION ===");
-          mergedLines.push(newContentClean);
-          mergedLines.push("");
-          mergedLines.push("=== LOCAL VERSION ===");
-          mergedLines.push(localTextClean);
-
-          await this.app.vault.modify(existingFile, mergedLines.join("\n"));
-          return;
-        }
-      }
-      
-      // No conflict: Overwrite
       await this.app.vault.modify(existingFile, newContent);
     } else {
-      // File does not exist: Create it
       await this.app.vault.create(filePath, newContent);
     }
   }
