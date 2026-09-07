@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "Harpy Automation & Sync Bridge",
+  "version": "1.0.0",
+  "description": "In-Browser Automation & Real-Time Sync Bridge for Harpy.gg and Obsidian",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*.harpy.gg/*",
+    "https://*.harpy.gg/*",
+    "https://harpy.gg/*",
+    "https://firestore.googleapis.com/*",
+    "https://identitytoolkit.googleapis.com/*",
+    "https://securetoken.googleapis.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Harpy Automation Bridge",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://harpy.gg/*",
+        "*://*.harpy.gg/*",
+        "https://harpy.gg/*",
+        "https://*.harpy.gg/*"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "injected/main-world-bridge.js"
+      ],
+      "matches": [
+        "https://*.harpy.gg/*",
+        "https://harpy.gg/*"
+      ]
+    }
+  ]
+}

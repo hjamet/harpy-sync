@@ -63,23 +63,6 @@ export class AssetManager {
       // Ensure attachments folder exists
       await this.ensureFolderExists(this.attachmentsFolder);
 
-      // Determine extension from url or fallback to png
-      const extensionMatch = url.split("?")[0].split("#")[0].match(/\.([a-zA-Z0-9]+)$/);
-      const ext = extensionMatch ? extensionMatch[1] : "png";
-
-      // Clean prefix name
-      const cleanPrefix = prefixName.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
-      const urlHash = hashString(url);
-      const fileName = `${cleanPrefix}_${urlHash}.${ext}`;
-      const localPath = `${this.attachmentsFolder}/${fileName}`;
-
-      // Check if file already exists in vault
-      const exists = await this.app.vault.adapter.exists(localPath);
-      if (exists) {
-        this.downloadCache.set(url, localPath);
-        return localPath;
-      }
-
       // Download using Obsidian's requestUrl
       const response = await requestUrl({
         url: url,
@@ -91,8 +74,70 @@ export class AssetManager {
         return null;
       }
 
+      if (!response.arrayBuffer) {
+        console.warn(`Failed to download asset: empty response buffer from ${url}`);
+        return null;
+      }
+
+      // Slice ArrayBufferView cleanly
+      const view = ArrayBuffer.isView(response.arrayBuffer)
+        ? (response.arrayBuffer as ArrayBufferView)
+        : new Uint8Array(response.arrayBuffer);
+
+      const cleanBuffer = view.buffer.slice(
+        view.byteOffset,
+        view.byteOffset + view.byteLength
+      ) as ArrayBuffer;
+      const bytes = new Uint8Array(cleanBuffer);
+
+      // Reject HTML text error payloads (e.g. <!DOCTYPE or <html)
+      const headerText = Array.from(bytes.slice(0, 20))
+        .map((b) => String.fromCharCode(b))
+        .join("")
+        .trim()
+        .toLowerCase();
+
+      if (headerText.startsWith("<!do") || headerText.startsWith("<htm")) {
+        console.warn(`AssetManager: Rejecting HTML error payload from ${url}`);
+        return null;
+      }
+
+      // Validate magic bytes & dynamically assign correct extension
+      let ext: string | null = null;
+      if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+        ext = "jpg";
+      } else if (bytes.length >= 4 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+        ext = "png";
+      } else if (bytes.length >= 3 && bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+        ext = "gif";
+      } else if (
+        bytes.length >= 12 &&
+        bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+        bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+      ) {
+        ext = "webp";
+      }
+
+      if (!ext) {
+        console.warn(`AssetManager: Invalid or unsupported image magic bytes from ${url}`);
+        return null;
+      }
+
+      // Clean prefix name
+      const cleanPrefix = (prefixName || "asset").replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
+      const urlHash = hashString(url);
+      const fileName = `${cleanPrefix}_${urlHash}.${ext}`;
+      const localPath = `${this.attachmentsFolder}/${fileName}`;
+
+      // Check if file already exists in vault
+      const exists = await this.app.vault.adapter.exists(localPath);
+      if (exists) {
+        this.downloadCache.set(url, localPath);
+        return localPath;
+      }
+
       // Write arrayBuffer to vault
-      await this.app.vault.createBinary(localPath, response.arrayBuffer);
+      await this.app.vault.createBinary(localPath, cleanBuffer);
       this.downloadCache.set(url, localPath);
       return localPath;
     } catch (error) {

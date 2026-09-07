@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harpy Automation Bridge</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-group">
+        <span class="logo-icon">🦅</span>
+        <div>
+          <h1 class="title">Harpy Sync Bridge</h1>
+          <p class="subtitle">In-Browser Automation & WebSocket Bridge</p>
+        </div>
+      </div>
+      <div id="overallStatusBadge" class="badge badge-warning">Initialisation</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Section 1: WebSocket Daemon Connection -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="dot dot-disconnected" id="wsDot"></span>
+            <span>WebSocket Obsidian Daemon</span>
+          </div>
+          <span class="badge" id="wsStatusBadge">Déconnecté</span>
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <span class="field-label">URL Serveur :</span>
+            <span class="field-value mono" id="wsUrlText">ws://127.0.0.1:18765</span>
+          </div>
+          <div class="actions-row">
+            <button id="btnReconnectWs" class="btn btn-secondary btn-sm">
+              <span class="btn-icon">🔄</span> Reconnecter
+            </button>
+            <button id="btnPingWs" class="btn btn-secondary btn-sm">
+              <span class="btn-icon">📡</span> Ping
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Firebase Auth & Session -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">🔐</span>
+            <span>Session Firebase STS</span>
+          </div>
+          <span class="badge badge-neutral" id="authStatusBadge">Non connecté</span>
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <span class="field-label">Utilisateur :</span>
+            <span class="field-value" id="userEmailText">Aucun</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">UID :</span>
+            <span class="field-value mono truncate" id="userUidText">-</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Expiration :</span>
+            <span class="field-value" id="tokenExpiryText">-</span>
+          </div>
+          <div class="actions-row">
+            <button id="btnCopyToken" class="btn btn-primary btn-sm" disabled>
+              <span class="btn-icon">📋</span> Copier le Jeton JWT
+            </button>
+            <button id="btnRefreshToken" class="btn btn-secondary btn-sm">
+              <span class="btn-icon">⚡</span> Rafraîchir
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Page Context & Angular Integration -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">🌐</span>
+            <span>Contexte Harpy.gg</span>
+          </div>
+          <span class="badge" id="pageTypeBadge">Onglet Inactif</span>
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <span class="field-label">Entité ID :</span>
+            <span class="field-value mono truncate" id="entityIdText">Non détectée</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Monde / Campagne :</span>
+            <span class="field-value mono truncate" id="worldIdText">-</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Angular Bridge :</span>
+            <span class="field-value" id="angularStatusText">En attente...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Fast Testing Actions -->
+      <section class="actions-section">
+        <button id="btnTestDom" class="btn btn-outline w-full">
+          <span>🎯 Tester l'Automatisation DOM</span>
+        </button>
+      </section>
+
+      <!-- Section 5: Activity Logs -->
+      <section class="card logs-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📜</span>
+            <span>Journal d'Activité</span>
+          </div>
+          <button id="btnClearLogs" class="btn-text">Effacer</button>
+        </div>
+        <div class="logs-container" id="logsContainer">
+          <div class="log-entry log-info">[Système] Prêt pour la synchronisation.</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Harpy Sync &copy; 2026</span>
+      <span class="footer-links">
+        <a href="https://harpy.gg" target="_blank" rel="noopener">harpy.gg</a>
+      </span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

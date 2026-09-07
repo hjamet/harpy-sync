@@ -1,0 +1,1750 @@
+{
+  "version": 13,
+  "format": "bypp",
+  "name": "Asharde",
+  "exportedAt": "2026-06-18T12:28:57.653Z",
+  "bundleVersion": "1",
+  "license": "ARR",
+  "licenseVersion": "4.0",
+  "attribution": {
+    "authorName": "OloriBern#3882"
+  },
+  "variables": [
+    {
+      "uid": "kbfH-LTKR-ua3m-GLlw",
+      "name": "Chance - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Chance - base",
+      "type": "number"
+    },
+    {
+      "uid": "kADx-MIRh-fJMH-bdO5",
+      "name": "Agilite - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Agilite - base",
+      "type": "number"
+    },
+    {
+      "uid": "VPUK-8MK8-W8r2-RWSn",
+      "name": "Talents",
+      "datasetsUids": [
+        "94bRj1B90bnDPkDOuAvh"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "Talents",
+      "type": "number"
+    },
+    {
+      "uid": "B8544P1gK9u3KtLc04IX",
+      "name": "test",
+      "datasetsUids": [
+        "9nDk0u8AXyNK45S4VeM7"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "test",
+      "type": "choice",
+      "options": [
+        {
+          "uid": "kMAO-cDGI-jChe-zLdc",
+          "label": "tata",
+          "icon": "card-spade"
+        },
+        {
+          "uid": "gMM7-cmd7-l80P-YS5H",
+          "label": "No label",
+          "icon": "face-smile-wink"
+        }
+      ]
+    },
+    {
+      "uid": "xh24-MVcm-cy9I-dHEw",
+      "name": "Vitesse - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Vitesse - base",
+      "type": "number"
+    },
+    {
+      "uid": "ajrZ-Hhd2-OvmI-13s2",
+      "name": "Perception - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Perception - base",
+      "type": "number"
+    },
+    {
+      "uid": "8Mgc-98Ab-mcdR-cPNJ",
+      "name": "Avantage - Desaventage",
+      "datasetsUids": [
+        "94bRj1B90bnDPkDOuAvh"
+      ],
+      "label": "Avantage - Desaventage",
+      "type": "choice",
+      "options": [
+        {
+          "uid": "JBRB-RLs1-rDrP-TnPC",
+          "label": "Désaventage extrême",
+          "icon": "tombstone"
+        },
+        {
+          "uid": "2sPo-MeJC-oDic-0iUE",
+          "label": "Désaventage majeur",
+          "icon": "face-scream"
+        },
+        {
+          "uid": "x1pa-Jst5-OiUI-H1aC",
+          "label": "Désaventage mineur",
+          "icon": "face-downcast-sweat"
+        },
+        {
+          "uid": "Io9C-15vT-5CKL-Q2NV",
+          "label": "No label",
+          "icon": "wreath-laurel"
+        },
+        {
+          "uid": "asNw-2m16-qGeZ-lqmV",
+          "label": "Aventage mineur",
+          "icon": "face-grin-wide"
+        },
+        {
+          "uid": "DEFC-Eq9O-DM58-uW0u",
+          "label": "Aventage majeur",
+          "icon": "face-smiling-hands"
+        },
+        {
+          "uid": "YRI7-5JnP-NAZI-zlp1",
+          "label": "Aventage extrême",
+          "icon": "sparkles"
+        }
+      ]
+    },
+    {
+      "uid": "icEo-adRe-IUwq-H0oV",
+      "name": "Intelligence - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Intelligence - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "h0gA-rEcL-icLU-2VSf",
+      "name": "Constitution - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Constitution - base",
+      "type": "number"
+    },
+    {
+      "uid": "OjJu-GsJG-wLfw-Ajrq",
+      "name": "Intelligence - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Intelligence - base",
+      "type": "number"
+    },
+    {
+      "uid": "Txrp-XtQm-0wzV-2bEG",
+      "name": "Attractivite - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Attractivite - base",
+      "type": "number"
+    },
+    {
+      "uid": "nmEz-4V1c-FveI-IsXt",
+      "name": "Force - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Force - base",
+      "type": "number"
+    },
+    {
+      "uid": "edFt-2aHk-eHE6-Kfor",
+      "name": "Caracteristique",
+      "datasetsUids": [
+        "94bRj1B90bnDPkDOuAvh"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "Caracteristique",
+      "type": "choice",
+      "options": [
+        {
+          "uid": "uemG-lDj1-witW-ClMM",
+          "label": "No label",
+          "icon": "wreath-laurel"
+        },
+        {
+          "uid": "UNVw-ytOH-WGfh-4pbx",
+          "label": "Erudition",
+          "icon": "book-sparkles"
+        },
+        {
+          "uid": "5aEe-cJ6L-D3du-EzP5",
+          "label": "Autorite",
+          "icon": "chess-king"
+        },
+        {
+          "uid": "foUC-Qb2h-LdrT-QTlH",
+          "label": "Agilite",
+          "icon": "person-fairy"
+        },
+        {
+          "uid": "j1fW-Uwag-sKFT-aVjR",
+          "label": "Perception",
+          "icon": "arrows-to-eye"
+        },
+        {
+          "uid": "freE-vWDd-KFbG-j7QR",
+          "label": "Force",
+          "icon": "sword"
+        },
+        {
+          "uid": "SOdd-eIFa-elxi-Nnea",
+          "label": "Constitution",
+          "icon": "face-head-bandage"
+        },
+        {
+          "uid": "I7lq-Kgz0-IZis-s8br",
+          "label": "Chance",
+          "icon": "card-spade"
+        },
+        {
+          "uid": "6Gdr-wk0Z-ig39-13sB",
+          "label": "Vitesse",
+          "icon": "dragon"
+        },
+        {
+          "uid": "qaee-RxTw-qBFo-GB1l",
+          "label": "Attractivite",
+          "icon": "heart"
+        },
+        {
+          "uid": "w4Bd-DYuY-swKy-y29w",
+          "label": "Intelligence",
+          "icon": "chess"
+        }
+      ]
+    },
+    {
+      "uid": "Ih5D-GdA9-sPf4-7dMj",
+      "name": "Intelligence - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Intelligence - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "Ta30-tbtS-0Qyu-LboR",
+      "name": "Intelligence - temporaire",
+      "datasetsUids": [
+        "xvQ7zFPR5RlvZXVTXJMi"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "Intelligence - temporaire",
+      "type": "number"
+    },
+    {
+      "uid": "6OnNBj6bCjmyahm64ceO",
+      "name": "Force_Base",
+      "datasetsUids": [
+        "RCvoaLsAFz00LGV7voy0"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "Force_Base",
+      "type": "number"
+    },
+    {
+      "uid": "ffFT-HKGg-CW3F-Xn1y",
+      "name": "Autorite - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Autorite - base",
+      "type": "number"
+    },
+    {
+      "uid": "5iYd-2kuT-4PB9-GlLL",
+      "name": "Erudition - base",
+      "datasetsUids": [
+        "XIOYMTB7NUMGVgcCCnZo"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Erudition - base",
+      "type": "number"
+    },
+    {
+      "uid": "7nMF-AY1P-rSfF-evWv",
+      "name": "Intelligence - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Intelligence - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "7SYJ-nuxx-oyWr-1oLe",
+      "name": "Force - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Force - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "RCeo-rKn6-N4LH-9DQs",
+      "name": "Erudition - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Erudition - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "kAWK-gCHF-umsa-Xu2V",
+      "name": "Vitesse - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Vitesse - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "CNuu-LpT5-Tblt-y4aa",
+      "name": "Reve - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Reve - base",
+      "type": "number"
+    },
+    {
+      "uid": "0jiT-WEh1-yIjP-zNvQ",
+      "name": "Bonus - Intelligence",
+      "datasetsUids": [
+        "m8KcqeNnPOhWMwXt5UPC"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Bonus - Intelligence",
+      "type": "number"
+    },
+    {
+      "uid": "QQUO-HKbX-eLs0-OlNc",
+      "name": "Art - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Art - base",
+      "type": "number"
+    },
+    {
+      "uid": "IBVN-M2dP-paU0-YcIa",
+      "name": "Art du deplacement - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Art du deplacement - base",
+      "type": "number"
+    },
+    {
+      "uid": "kFou-XBgl-6kfQ-rP34",
+      "name": "Constitution - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Constitution - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "Cvem-wmt5-0yiI-OCZl",
+      "name": "Perception - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Perception - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "TQsD-0zJF-e0X2-IU4l",
+      "name": "Agilite - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Agilite - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "2j8B-pEYY-YV0y-vUZw",
+      "name": "Constitution - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Constitution - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "Rujp-ClkU-c3kH-tn38",
+      "name": "Masse - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Masse - base",
+      "type": "number"
+    },
+    {
+      "uid": "npcj-QF9N-55XV-gsR0",
+      "name": "Autorite - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Autorite - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "5kPt-P7gA-j5BS-HJGD",
+      "name": "Agilite - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Agilite - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "iO4M-eJ1N-BEux-0so5",
+      "name": "Attractivite - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Attractivite - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "yhZe-77p6-mzuZ-y3iR",
+      "name": "Armes inhabituelles - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Armes inhabituelles - base",
+      "type": "number"
+    },
+    {
+      "uid": "RQg1-kMR4-JRP5-buB1",
+      "name": "Erudition - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Erudition - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "lNJm-92Gm-BJoa-wSgT",
+      "name": "Attractivite - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Attractivite - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "sUXs-0xUQ-zWjx-oqJ2",
+      "name": "Hache - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Hache - base",
+      "type": "number"
+    },
+    {
+      "uid": "wXUL-K79z-l8C0-eJjp",
+      "name": "Chance - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Chance - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "0QUd-oTMz-wg8S-6l9e",
+      "name": "Bonus - Constitution",
+      "datasetsUids": [
+        "m8KcqeNnPOhWMwXt5UPC"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Bonus - Constitution",
+      "type": "number"
+    },
+    {
+      "uid": "6HVP-OiyE-qESo-qVRD",
+      "name": "Autorite - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Autorite - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "ATba-CK45-TIuq-KBYm",
+      "name": "Erudition - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Erudition - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "VFMp-b8Yd-Q8ZG-L5uE",
+      "name": "Autorite - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Autorite - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "cZn8-aNtD-xMaV-G9SC",
+      "name": "Agilite - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Agilite - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "lGKF-95IG-Vmm8-IHMT",
+      "name": "Chance - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Chance - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "4nVT-1VKr-K1Di-yB8P",
+      "name": "Epee - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Epee - base",
+      "type": "number"
+    },
+    {
+      "uid": "oQwF-yUze-vDqp-oqIJ",
+      "name": "Lance - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Lance - base",
+      "type": "number"
+    },
+    {
+      "uid": "ASeV-ByQ0-pdvc-evFk",
+      "name": "Constitution - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Constitution - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "pr71-81Im-QIEt-e2T4",
+      "name": "Perception - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Perception - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "h8U8Nhi50A1PkI6pkYHN",
+      "name": "Santé",
+      "datasetsUids": [
+        "mU84pTg1XYVT1ReLBKom"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "Santé",
+      "type": "number"
+    },
+    {
+      "uid": "d8Hk-1ydF-omcx-uYdj",
+      "name": "Force - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Force - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "LOC6-KZLZ-5boD-fnrX",
+      "name": "Perception - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Perception - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "aTIs-jY4e-NIif-oaqT",
+      "name": "Vitesse - mineur",
+      "datasetsUids": [
+        "W7BZdmSLbJsXyUVY1toC"
+      ],
+      "label": "Vitesse - mineur",
+      "type": "number"
+    },
+    {
+      "uid": "yKsv-NtUm-Y0sl-CoS4",
+      "name": "Difficulte",
+      "datasetsUids": [
+        "94bRj1B90bnDPkDOuAvh"
+      ],
+      "label": "Difficulte",
+      "type": "number"
+    },
+    {
+      "uid": "peXs-fHxT-9ppi-y2sX",
+      "name": "Force - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Force - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "Yq72-s4Ll-4ECZ-1lX1",
+      "name": "Chance - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Chance - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "ccti-ro4g-tSfG-i8ZI",
+      "name": "Jouer avec le reve",
+      "datasetsUids": [
+        "94bRj1B90bnDPkDOuAvh"
+      ],
+      "label": "Jouer avec le reve",
+      "type": "number"
+    },
+    {
+      "uid": "QrLY-Z3Kl-JE1k-AQnn",
+      "name": "Vitesse - majeur",
+      "datasetsUids": [
+        "tVp95dXd1BVjIk6RvHVp"
+      ],
+      "label": "Vitesse - majeur",
+      "type": "number"
+    },
+    {
+      "uid": "dcOj-N8Yd-fb0N-LQpc",
+      "name": "Attractivite - definitif",
+      "datasetsUids": [
+        "opfsaPhvT4UFJhuCfOi9"
+      ],
+      "label": "Attractivite - definitif",
+      "type": "number"
+    },
+    {
+      "uid": "j90A-GYne-Miih-mSBE",
+      "name": "Combat a mains nues - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Combat a mains nues - base",
+      "type": "number"
+    },
+    {
+      "uid": "qriD-uthq-DkIJ-j78U",
+      "name": "Discretion - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Discretion - base",
+      "type": "number"
+    },
+    {
+      "uid": "vsUo-5yUF-7eKF-SUXH",
+      "name": "Arc - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Arc - base",
+      "type": "number"
+    },
+    {
+      "uid": "Bam6-rqHo-dfKb-jjZp",
+      "name": "Course - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Course - base",
+      "type": "number"
+    },
+    {
+      "uid": "HtOw-6TM3-tfdC-vrHV",
+      "name": "Dressage - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Dressage - base",
+      "type": "number"
+    },
+    {
+      "uid": "Q170-jRmM-D1aP-fgJC",
+      "name": "Pistage - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Pistage - base",
+      "type": "number"
+    },
+    {
+      "uid": "0KKp-8Qcr-aepK-zpDX",
+      "name": "Arcanes - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Arcanes - base",
+      "type": "number"
+    },
+    {
+      "uid": "aeWa6RJHWnuHv5nivFfB",
+      "name": "États",
+      "datasetsUids": [
+        "mU84pTg1XYVT1ReLBKom"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "États",
+      "type": "choice",
+      "options": [
+        {
+          "uid": "cBhS-KEnO-9TnV-pq1g",
+          "label": "Aveuglé",
+          "icon": "eye-low-vision"
+        },
+        {
+          "uid": "c8mM-byIk-Eoy9-ZLuK",
+          "label": "Charmé",
+          "icon": "face-grin-hearts"
+        },
+        {
+          "uid": "b1Bl-OByg-pqlM-JT0h",
+          "label": "Sourd",
+          "icon": "ear-deaf"
+        },
+        {
+          "uid": "Yzbv-c5S1-Qr12-s80w",
+          "label": "Effrayé",
+          "icon": "face-fearful"
+        },
+        {
+          "uid": "NTp2-Poh4-m0mc-UiQG",
+          "label": "Empoigné",
+          "icon": "people-pulling"
+        },
+        {
+          "uid": "LG0Y-FEce-EPCc-5SFn",
+          "label": "Incapable",
+          "icon": "face-dizzy"
+        },
+        {
+          "uid": "Rj7o-TTwW-tG9x-y5L0",
+          "label": "Invisible",
+          "icon": "face-dotted"
+        },
+        {
+          "uid": "XDU4-PGtv-6Sde-bbJ4",
+          "label": "Petrifié",
+          "icon": "face-meh-blank"
+        },
+        {
+          "uid": "HqYc-feNt-fL3Q-9uHc",
+          "label": "Empoisonné",
+          "icon": "skull-crossbones"
+        },
+        {
+          "uid": "XS3A-0pnE-n79z-Y4vy",
+          "label": "À terre",
+          "icon": "person-falling"
+        },
+        {
+          "uid": "LAFw-caR0-YeeL-OUVq",
+          "label": "Entravé",
+          "icon": "person-drowning"
+        },
+        {
+          "uid": "jkzo-d01y-KKex-ldcr",
+          "label": "Étourdi",
+          "icon": "face-spiral-eyes"
+        },
+        {
+          "uid": "9bHr-7DBm-26j9-jGCc",
+          "label": "Inconscient",
+          "icon": "face-sleepy"
+        }
+      ]
+    },
+    {
+      "uid": "hJsd-QV5L-84Gi-QKlZ",
+      "name": "Connaissance - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Connaissance - base",
+      "type": "number"
+    },
+    {
+      "uid": "FtkI-ccth-UNgB-QSHd",
+      "name": "Charme - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Charme - base",
+      "type": "number"
+    },
+    {
+      "uid": "iF1d-XRlf-8Rld-8pHn",
+      "name": "Discussion - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Discussion - base",
+      "type": "number"
+    },
+    {
+      "uid": "9Lrw-7xEy-7sVX-PU82",
+      "name": "Psychologie - base",
+      "datasetsUids": [
+        "lw9h8lThxkF4kMR9qhdr"
+      ],
+      "isHiddenFromSheet": true,
+      "label": "Psychologie - base",
+      "type": "number"
+    },
+    {
+      "uid": "fUEbqHhEm7UK3sFGE6Rt",
+      "name": "États",
+      "datasetsUids": [
+        "0LhGASAH1Zr1SzFMbNM2"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "États",
+      "type": "choice",
+      "options": [
+        {
+          "uid": "YN5v-xwLf-OCxg-TKGK",
+          "label": "Charmé",
+          "icon": "face-grin-hearts"
+        },
+        {
+          "uid": "hsRn-fJ5H-Dqlm-5gXx",
+          "label": "Sourd",
+          "icon": "ear-deaf"
+        },
+        {
+          "uid": "PnLQ-xruC-9FwM-iGai",
+          "label": "Effrayé",
+          "icon": "face-fearful"
+        },
+        {
+          "uid": "UGln-zmzl-mWl5-prP3",
+          "label": "Empoigné",
+          "icon": "people-pulling"
+        },
+        {
+          "uid": "f8S3-DCjY-uX79-lGM5",
+          "label": "Incapable",
+          "icon": "face-dizzy"
+        },
+        {
+          "uid": "adMN-6uR3-5CEO-JXwn",
+          "label": "Invisible",
+          "icon": "face-dotted"
+        },
+        {
+          "uid": "gbni-AjAK-ws5g-uHcj",
+          "label": "Petrifié",
+          "icon": "face-meh-blank"
+        },
+        {
+          "uid": "iwsP-9V5i-5MnB-gMVW",
+          "label": "Empoisonné",
+          "icon": "skull-crossbones"
+        },
+        {
+          "uid": "Vn3M-TmQp-p51F-Z8si",
+          "label": "À terre",
+          "icon": "person-falling"
+        },
+        {
+          "uid": "40sL-gLOG-uKWr-Npt1",
+          "label": "Entravé",
+          "icon": "person-drowning"
+        },
+        {
+          "uid": "uzlt-iSwg-IrBL-BR1q",
+          "label": "Étourdi",
+          "icon": "face-spiral-eyes"
+        },
+        {
+          "uid": "jYZx-lZwY-U8y2-Hec0",
+          "label": "Inconscient",
+          "icon": "face-sleepy"
+        }
+      ],
+      "isMultiple": true
+    },
+    {
+      "uid": "aPikilYn2LHmMboghkVq",
+      "name": "Santé",
+      "datasetsUids": [
+        "0LhGASAH1Zr1SzFMbNM2"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "Santé",
+      "type": "number"
+    },
+    {
+      "uid": "kK4y-gpUd-Lw82-cRqT",
+      "name": "Valeur d'armure",
+      "datasetsUids": [
+        "1UtkqSpa5mMZK6JLThK5"
+      ],
+      "label": "Valeur d'armure",
+      "type": "number"
+    },
+    {
+      "uid": "hktm-JWFV-E52x-J6yp",
+      "name": "Tier d'armure",
+      "datasetsUids": [
+        "1UtkqSpa5mMZK6JLThK5"
+      ],
+      "label": "Tier d'armure",
+      "type": "choice",
+      "options": [
+        {
+          "uid": "mkKT-d2OU-A936-YFF5",
+          "label": "Tier 1",
+          "icon": "dagger"
+        },
+        {
+          "uid": "UhGN-E5MO-XOOy-xcn2",
+          "label": "Tier 2",
+          "icon": "sword"
+        },
+        {
+          "uid": "0XQh-bOAW-ztzs-cuxC",
+          "label": "Tier 3",
+          "icon": "axe-battle"
+        }
+      ]
+    },
+    {
+      "uid": "aPmzuPX54Jqwbd3r5uA2",
+      "name": "Item type",
+      "datasetsUids": [
+        "OkEsNGU4Kss52SO5jcDD"
+      ],
+      "label": "Item type",
+      "type": "choice",
+      "options": [
+        {
+          "uid": "pRH5-8inh-XzJs-c3im",
+          "label": "Weapon"
+        },
+        {
+          "uid": "OX3q-ycyt-9oFH-Pmok",
+          "label": "Armor"
+        },
+        {
+          "uid": "yfdj-0N9r-S1lm-ofbo",
+          "label": "Consumable"
+        }
+      ]
+    },
+    {
+      "uid": "iK1mv0H2Xpyg14twlRlo",
+      "name": "Force_Aff_Temporaire",
+      "datasetsUids": [
+        "RCvoaLsAFz00LGV7voy0"
+      ],
+      "isMandatory": false,
+      "isHiddenFromSheet": false,
+      "label": "Force_Aff_Temporaire",
+      "type": "number"
+    },
+    {
+      "uid": "pq1v6Jg9wU5skXd2y1G9",
+      "name": "test",
+      "datasetsUids": [
+        "RCvoaLsAFz00LGV7voy0"
+      ],
+      "isHiddenFromSheet": false,
+      "label": "test",
+      "type": "roll",
+      "diceFormula": "<p>\"1d20+ <span class=\"mceNonEditable\" data-variable=\"iK1mv0H2Xpyg14twlRlo\">$Force_Aff_Temporaire</span> \"</p>"
+    }
+  ],
+  "tags": [
+    {
+      "uid": "Lpq5OY5ut45fuyT9NJzf",
+      "name": "Al-Arad",
+      "useAsFolder": false
+    },
+    {
+      "uid": "mnjHtBrTTaX3ItVLdKxP",
+      "name": "Julien",
+      "useAsFolder": false
+    },
+    {
+      "uid": "KDlRNZ7GUHD3wE1Fk77D",
+      "name": "Tenriel",
+      "useAsFolder": false
+    },
+    {
+      "uid": "MXyaR8npyAXg5larb6Eh",
+      "name": "Askenvald",
+      "useAsFolder": false
+    },
+    {
+      "uid": "pz1RVuoeipgI6XSl6s6w",
+      "name": "Henri",
+      "useAsFolder": false
+    },
+    {
+      "uid": "418BlDGPnlsxZWJAHMD9",
+      "name": "Divinité",
+      "useAsFolder": false
+    },
+    {
+      "uid": "HZthwqsAJpCeoqap46KF",
+      "name": "Baron",
+      "useAsFolder": false
+    },
+    {
+      "uid": "LLDct0KNlYrS3zVGfodo",
+      "name": "Oleine",
+      "useAsFolder": false
+    },
+    {
+      "uid": "ANmsIynyeYwJKKnMJGhx",
+      "name": "Hellade",
+      "useAsFolder": false
+    },
+    {
+      "uid": "uN7VuFp9HhmDdJWi147N",
+      "name": "Humain",
+      "useAsFolder": false
+    },
+    {
+      "uid": "dy740d6KSzcNcQGAvstv",
+      "name": "Jotun",
+      "useAsFolder": false
+    },
+    {
+      "uid": "IDLMQWhtf7bdKT4P9J07",
+      "name": "Dragon",
+      "useAsFolder": false
+    },
+    {
+      "uid": "WtjHltuFMIwnjpI4flJb",
+      "name": "Vampire",
+      "useAsFolder": false
+    },
+    {
+      "uid": "DqI5zE1uTjVQYIq7VR8e",
+      "name": "Ardeal",
+      "useAsFolder": false
+    },
+    {
+      "uid": "5vQehAbfvoZGylF9Cb2g",
+      "name": "Aasimar",
+      "useAsFolder": false
+    },
+    {
+      "uid": "E92VieSzddLQWWOTAQQf",
+      "name": "Al-Barn",
+      "useAsFolder": false
+    },
+    {
+      "uid": "wn3znjkK1JZ1ZbEo0Gta",
+      "name": "Demi-Dieu",
+      "useAsFolder": false
+    },
+    {
+      "uid": "c8ZWl586pjquZWp6shct",
+      "name": "Capracis",
+      "useAsFolder": false
+    },
+    {
+      "uid": "nNE7H6YTrWgRSN9nZPCy",
+      "name": "Bestiaire",
+      "useAsFolder": false
+    },
+    {
+      "uid": "G8eXXADjX36hdA5jADOO",
+      "name": "Nation",
+      "useAsFolder": false
+    },
+    {
+      "uid": "eSDDEbIzK1aWIIgSWZHm",
+      "name": "Ville",
+      "useAsFolder": false
+    },
+    {
+      "uid": "zVSpKh9Wfvc4GNnHGkGw",
+      "name": "Région",
+      "useAsFolder": false
+    },
+    {
+      "uid": "vDEvJ7th8bLuTXoJEn3k",
+      "name": "Race",
+      "useAsFolder": false
+    },
+    {
+      "uid": "dBTsYRp3uix2XaFzjQx9",
+      "name": "Autorité",
+      "useAsFolder": false
+    },
+    {
+      "uid": "GPXvkdGGp0Rd6ObIX5q8",
+      "name": "Classe",
+      "useAsFolder": false
+    },
+    {
+      "uid": "hbOykPpUgnG354qujZp2",
+      "name": "Erudition",
+      "useAsFolder": false
+    },
+    {
+      "uid": "OiLbrmuhbMBdYwuhwm0J",
+      "name": "Vitesse",
+      "useAsFolder": false
+    },
+    {
+      "uid": "hm0wDAFX3GtMfp5IoGT3",
+      "name": "Force",
+      "useAsFolder": false
+    },
+    {
+      "uid": "sAgocwOPbrmBm0WtuOhH",
+      "name": "Perception",
+      "useAsFolder": false
+    },
+    {
+      "uid": "6lugiR6o3uwzQK9JUfvk",
+      "name": "Agilité",
+      "useAsFolder": false
+    },
+    {
+      "uid": "faWCOX7OUOuijBjtkOK2",
+      "name": "Chance",
+      "useAsFolder": false
+    },
+    {
+      "uid": "8v6XEpmUnppwRiLfiTnz",
+      "name": "Attractivité",
+      "useAsFolder": false
+    },
+    {
+      "uid": "w6uqgbSEW6NqQ8KjxYOV",
+      "name": "Constitution",
+      "useAsFolder": false
+    },
+    {
+      "uid": "Xcur9OYhwy427vhHPuG0",
+      "name": "Intelligence",
+      "useAsFolder": false
+    },
+    {
+      "uid": "iXrVgxHbZjlBbPIW8VwV",
+      "name": "journal",
+      "useAsFolder": false
+    },
+    {
+      "uid": "TfK8KDxR6Pi7RFDZRNKz",
+      "name": "MDRA",
+      "useAsFolder": false
+    },
+    {
+      "uid": "EETozc8Ffeq4Wh1UxHtN",
+      "name": "Armure",
+      "useAsFolder": false
+    },
+    {
+      "uid": "c7h8bR7SMCcsehSyVz4l",
+      "name": "Arme classique",
+      "useAsFolder": false
+    },
+    {
+      "uid": "QW4utaTXkAJaG6TRr5Q5",
+      "name": "Enchanté",
+      "useAsFolder": false
+    },
+    {
+      "uid": "yTrtUQvKyUpqzK7wFHNP",
+      "name": "Talent",
+      "useAsFolder": true
+    },
+    {
+      "uid": "4T2ZGaAval86Grp0INHl",
+      "name": "Course",
+      "useAsFolder": false
+    },
+    {
+      "uid": "MKmlmCVR0s05chvEpQTd",
+      "name": "Marteau",
+      "useAsFolder": false
+    },
+    {
+      "uid": "jAb9Tdu0qSLIMtyvHCk8",
+      "name": "Masse d'arme",
+      "useAsFolder": false
+    },
+    {
+      "uid": "Bhn2owMLb9IveUm0grgX",
+      "name": "Symbole",
+      "useAsFolder": true
+    },
+    {
+      "uid": "d52EETihLOTqsQ7UFltY",
+      "name": "Pistage",
+      "useAsFolder": false
+    },
+    {
+      "uid": "vji8fiZKtW1TqRxcy6TV",
+      "name": "Signe",
+      "useAsFolder": true
+    },
+    {
+      "uid": "HRhCmyN0puPu7fDRWl0Z",
+      "name": "Charme",
+      "useAsFolder": false
+    },
+    {
+      "uid": "yLI21lwQkgkzCXFMBrFW",
+      "name": "Intimidation",
+      "useAsFolder": false
+    },
+    {
+      "uid": "R9tdthqbFNqO1sgNmEMo",
+      "name": "Prestige",
+      "useAsFolder": false
+    },
+    {
+      "uid": "Z9XA6yXmm5LaF0NrNfPE",
+      "name": "Métabolisme",
+      "useAsFolder": false
+    },
+    {
+      "uid": "5qeL0af6wjs0nw3i8rv8",
+      "name": "Psychologie",
+      "useAsFolder": false
+    },
+    {
+      "uid": "vYq0Fq7n3vGCFvHPQd0K",
+      "name": "Discussion",
+      "useAsFolder": false
+    },
+    {
+      "uid": "yE0JJhSwZ7Cg1WzPNXMz",
+      "name": "Connaissance",
+      "useAsFolder": false
+    },
+    {
+      "uid": "HuYRIbn5MQfwxrB8MNwn",
+      "name": "Combat à mains nues",
+      "useAsFolder": false
+    },
+    {
+      "uid": "x9VGy8sOFEpYXhhCdLID",
+      "name": "Gersants",
+      "useAsFolder": false
+    },
+    {
+      "uid": "b3Y0tOUz1JfLnuEVrFdZ",
+      "name": "Arbalète",
+      "useAsFolder": false
+    },
+    {
+      "uid": "HZPz2lMNXwBcpv41Ft8X",
+      "name": "Dressage",
+      "useAsFolder": false
+    },
+    {
+      "uid": "xcJcDoZkGxJg909JHkBy",
+      "name": "Alchimie",
+      "useAsFolder": false
+    },
+    {
+      "uid": "4dbAPhKOozzQG15OpIQl",
+      "name": "Epée",
+      "useAsFolder": false
+    },
+    {
+      "uid": "xzS6VTPGObDMl3qGgP3B",
+      "name": "Hache",
+      "useAsFolder": false
+    },
+    {
+      "uid": "Otwi8EjvWSOnzpbk8MJl",
+      "name": "Marchandage",
+      "useAsFolder": false
+    },
+    {
+      "uid": "8STNRcjTdo8OFnP9CtGB",
+      "name": "Arc",
+      "useAsFolder": false
+    },
+    {
+      "uid": "uPrXMjHFOdR3g9T3eJxI",
+      "name": "Arme à feu",
+      "useAsFolder": false
+    },
+    {
+      "uid": "iXFnTNLSkIQ3q2hO81vw",
+      "name": "Discrétion",
+      "useAsFolder": false
+    },
+    {
+      "uid": "IcgZsW3hm8fqzIJkI0Zp",
+      "name": "Stratégie",
+      "useAsFolder": false
+    },
+    {
+      "uid": "zIMiOY4KcrmXFRuPGelN",
+      "name": "Dague",
+      "useAsFolder": false
+    },
+    {
+      "uid": "nDUoSv4WLFKzKFrXeH3r",
+      "name": "Arcane",
+      "useAsFolder": false
+    },
+    {
+      "uid": "rZhFxVudhGXcXKhCvFQs",
+      "name": "Lance",
+      "useAsFolder": false
+    },
+    {
+      "uid": "YHvWyW8Sc6nMZCK0Wxrh",
+      "name": "Rêve",
+      "useAsFolder": false
+    },
+    {
+      "uid": "K1RoZpZ5RcywmaEjAFHs",
+      "name": "Premiers Secours",
+      "useAsFolder": false
+    },
+    {
+      "uid": "p6upNViVfXam33jBxToC",
+      "name": "Fouiller/Dissimuler",
+      "useAsFolder": false
+    },
+    {
+      "uid": "cfXPxexQ9PWaiy0pOQRl",
+      "name": "Equitation",
+      "useAsFolder": false
+    },
+    {
+      "uid": "mPcod1JJiy69ttw1YsTu",
+      "name": "Art du mouvement",
+      "useAsFolder": false
+    },
+    {
+      "uid": "zhnWtFD0lmd1kQJs5Gta",
+      "name": "Mensonge",
+      "useAsFolder": false
+    },
+    {
+      "uid": "M6prk56rgRAWyLY8vR58",
+      "name": "Séduction",
+      "useAsFolder": false
+    },
+    {
+      "uid": "ND2PgDCZl8sKoWl17RLK",
+      "name": "Suivre",
+      "useAsFolder": false
+    },
+    {
+      "uid": "Cit9LYHTitYpg6u1fhFx",
+      "name": "Bouclier",
+      "useAsFolder": false
+    },
+    {
+      "uid": "2s6RaplgsSnEBhWyw3oc",
+      "name": "Règles",
+      "useAsFolder": false
+    },
+    {
+      "uid": "znxol8XilkI5nu4IITup",
+      "name": "Continent",
+      "useAsFolder": false
+    },
+    {
+      "uid": "ZDzmMC48A6e8jQtvwxlS",
+      "name": "Contrôle des foules",
+      "useAsFolder": false
+    },
+    {
+      "uid": "WQ5BmA8DyCmHCk2O14AB",
+      "name": "Origine",
+      "useAsFolder": false
+    },
+    {
+      "uid": "WCjFxfmrsWBLyrNBlQEe",
+      "name": "Rage",
+      "useAsFolder": false
+    }
+  ],
+  "tagCategories": [],
+  "sheets": [
+    {
+      "uid": "Kp9g30ra6RP26rA0TDUG",
+      "originalUrl": "https://firebasestorage.googleapis.com/v0/b/harpy-prod.appspot.com/o/compendium_bundles%2FRBoMDURcQZPH4hsAs1HB%2Fassets%2Fe274e3defbdb8ffbf6aaf1693e9a6a3acaca217f158e0819cb0269429cd50e51%2Foriginal.jpg?alt=media&token=965FbL-kf268b-YLQEXh-X2O60i",
+      "thumbnailUrl": "https://firebasestorage.googleapis.com/v0/b/harpy-prod.appspot.com/o/compendium_bundles%2FRBoMDURcQZPH4hsAs1HB%2Fassets%2F8a75442597be8def5b12a0627d02d49cb29e602c56fe3c9d5c06128a1f82dab0%2Fthumb.jpg?alt=media&token=zFRRN2-p7MIbU-QS7Avp-MuIQv5",
+      "name": "Caractéristiques",
+      "widgetUids": [
+        "YBIYSUOxjVvoMLg4ALhE"
+      ]
+    }
+  ],
+  "dataTables": [],
+  "scenes": [
+    {
+      "uid": "PSRZ2v3NQyNaASaMzwNn",
+      "name": "test",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "WYIwa9fUIH8udcwMZ6Fm",
+      "name": "Petites mains",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "ImgpSA2iFlQ01HUMyRvB",
+      "name": "L'Hellade",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "EXBarOj9OA2BwFEqkFcq",
+      "name": "Al Arad",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "oAgMPhONjyt3lN5Mn4vx",
+      "name": "Forêt image",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "oGawlCtqmMIbPKeo0oOq",
+      "name": "Forêt 2 image",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 10,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "azOTBOLitvnOhplZw8WI",
+      "name": "Plaine",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 1,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "zAx5hRrZ8xBdSlJogI4X",
+      "name": "La Ville à l'Envers",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "aUJtZpYxK4Ln3wEjaodg",
+      "name": "Al-Barn",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "WPN7tIZDfjBr75eis31y",
+      "name": "Les Terres Hautes",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "U1H1QCbK7M74LZ8woiq3",
+      "name": "Port Calme",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "B3RV3DmToo78oMf9wWut",
+      "name": "Plaine ardente",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "BdeAcHg4er0mJLHClAVx",
+      "name": "Ardeal",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "FO1i6y4PRS56Gwx4xsEo",
+      "name": "Les Terres Hautes",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "JovgQoCte7I2YK7yMKMd",
+      "name": "Jotnar",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "KOJi6Iy3INh0X2vMUvPp",
+      "name": "Al Arad",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "LpWw1MigdQzYaGEbb2jo",
+      "name": "Croisey",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "McCuNI3NcWoFJY0c0rJF",
+      "name": "Jotnar",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "PKr9wXZbRIvKeRFmmdp0",
+      "name": "La Forêt grise",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "S1V7sYIby5FgVmUK0HPj",
+      "name": "Tenriel",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "UZhXPTeIRA79KgZjxzPR",
+      "name": "Asham-azraq",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "VJ9guKIQ5qrEscGejh6o",
+      "name": "Jotnar",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "W2ahmZithL7zPtQZQJEL",
+      "name": "Héllade",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "Xet7niSvKH1JmYtapa82",
+      "name": "Cavahan",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "dsGFZRQpymQu41utlcW2",
+      "name": "Jotnar",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "pUk2aZgzY8BPfUcrxDzu",
+      "name": "Verdam",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "rYbSuQnffYCEpCntx2iu",
+      "name": "Jotnar",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "tmhRHdcsyPImErmNozuu",
+      "name": "Les montagnes de l'absolution",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "ususlDsKX0G63dEVBn39",
+      "name": "Jotnar, le repos des Dieux",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "vdo74oo7C9g52iWCGGH9",
+      "name": "Jotnar",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    },
+    {
+      "uid": "y7uakMGh0vkS4oIk9frM",
+      "name": "Jotnar",
+      "lightPositionX": 0,
+      "lightPositionZ": 0,
+      "lightIntensity": 5,
+      "lightColor": "#ffffff",
+      "useCustomLightPosition": true
+    }
+  ],
+  "sceneMaps": [],
+  "sceneBackgrounds": [],
+  "widgets": [
+    {
+      "uid": "YBIYSUOxjVvoMLg4ALhE",
+      "name": "YBIYSUOxjVvoMLg4ALhE",
+      "area": {
+        "width": 13.567251461988304,
+        "height": 5.716726863179153
+      },
+      "position": {
+        "left": 26.432748538011698,
+        "top": 17.56443615933305
+      },
+      "type": "toggle"
+    }
+  ]
+}

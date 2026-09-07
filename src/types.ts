@@ -10,7 +10,10 @@ import {
   AssetSchema,
   VariableSchema,
   SheetSchema,
-  DataTableSchema
+  DataTableSchema,
+  SceneSchema,
+  SceneMapSchema,
+  SceneBackgroundSchema
 } from "bypp-format";
 
 // Infer type definitions from bypp-format schemas
@@ -25,6 +28,9 @@ export type Asset = z.infer<typeof AssetSchema>;
 export type Variable = z.infer<typeof VariableSchema>;
 export type Sheet = z.infer<typeof SheetSchema>;
 export type DataTable = z.infer<typeof DataTableSchema>;
+export type Scene = z.infer<typeof SceneSchema>;
+export type SceneMap = z.infer<typeof SceneMapSchema>;
+export type SceneBackground = z.infer<typeof SceneBackgroundSchema>;
 
 export interface ImportOptions {
   vaultRoot: string; // The root directory in the vault where files will be imported

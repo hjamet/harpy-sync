@@ -97,6 +97,7 @@ export class VaultScanner {
 
     // Pass 1: Build entity map (name / displayName -> harpy-uid)
     const entityMap = new Map<string, string>();
+    const entityScenesMap = new Map<string, string[]>(); // entityUid -> sceneUids[]
     const fileCacheList: { file: TFile; frontmatter: Record<string, any>; cleanContent: string; entityUid: string; displayName: string }[] = [];
 
     for (const file of mdFiles) {
@@ -107,10 +108,13 @@ export class VaultScanner {
 
       const entityUid = frontmatter["harpy-uid"] || frontmatter["uid"] || generateUid();
       const displayName = frontmatter["displayName"] || file.basename;
+      const fileType = frontmatter["type"];
 
-      entityMap.set(displayName, entityUid);
-      entityMap.set(sanitizeFileName(displayName), entityUid);
-      entityMap.set(file.basename, entityUid);
+      if (fileType !== "battlemap" && fileType !== "scene") {
+        entityMap.set(displayName, entityUid);
+        entityMap.set(sanitizeFileName(displayName), entityUid);
+        entityMap.set(file.basename, entityUid);
+      }
 
       fileCacheList.push({ file, frontmatter, cleanContent, entityUid, displayName });
     }
@@ -119,6 +123,21 @@ export class VaultScanner {
     for (const item of fileCacheList) {
       const { file, frontmatter, cleanContent, entityUid, displayName } = item;
       const entityType = frontmatter["type"] || "note";
+
+      // If file is a battlemap note, record its scene UID linkage to parent entity and skip entity creation
+      if (entityType === "battlemap" || entityType === "scene") {
+        const sceneUid = frontmatter["harpy-uid"] || frontmatter["uid"];
+        const targetEntityUid = frontmatter["entityUid"];
+        if (targetEntityUid && sceneUid) {
+          if (!entityScenesMap.has(targetEntityUid)) {
+            entityScenesMap.set(targetEntityUid, []);
+          }
+          if (!entityScenesMap.get(targetEntityUid)!.includes(sceneUid)) {
+            entityScenesMap.get(targetEntityUid)!.push(sceneUid);
+          }
+        }
+        continue;
+      }
 
       // 1. Process Tags
       const tagsUid: string[] = [];
@@ -188,17 +207,32 @@ export class VaultScanner {
       );
 
       const pagesOrder: string[] = [];
+      const pageMap = new Map<string, Page>();
+      pages.forEach(p => pageMap.set(p.uid, p));
+      const chunkMap = new Map<string, Chunk>();
+      chunks.forEach(c => chunkMap.set(c.uid, c));
+
       for (const page of filePages) {
         pagesOrder.push(page.uid);
-        pages.push({
-          ...page,
-          entityUid
-        });
+        if (!pageMap.has(page.uid)) {
+          const newPage = { ...page, entityUid };
+          pageMap.set(page.uid, newPage);
+          pages.push(newPage);
+        }
       }
 
       for (const chunk of fileChunks) {
-        chunks.push(chunk);
+        if (!chunkMap.has(chunk.uid)) {
+          chunkMap.set(chunk.uid, chunk);
+          chunks.push(chunk);
+        }
       }
+
+      // Re-inject scene UIDs transparently
+      const fmScenes = frontmatter["scenesUids"] || frontmatter["scenes"];
+      const frontmatterScenes: string[] = Array.isArray(fmScenes) ? fmScenes : typeof fmScenes === "string" ? [fmScenes] : [];
+      const battleMapScenes = entityScenesMap.get(entityUid) || [];
+      const scenesUids = Array.from(new Set([...frontmatterScenes, ...battleMapScenes]));
 
       // 4. Assemble Entity
       entities.push({
@@ -211,6 +245,7 @@ export class VaultScanner {
         originalUrl: profileUrl.startsWith("http") ? profileUrl : undefined,
         pagesOrder,
         data: entityData,
+        scenesUids: scenesUids.length > 0 ? scenesUids : undefined,
         assetUids: []
       } as any);
     }
@@ -254,13 +289,18 @@ export class VaultScanner {
     const lines = cleanContent.split("\n");
 
     const descriptionLines: string[] = [];
-    const pageBlocks: { uid: string | null; name: string; lines: string[] }[] = [];
-    let currentBlock: { uid: string | null; name: string; lines: string[] } | null = null;
+    const pageBlocks: { uid: string | null; name: string; type?: string; lines: string[] }[] = [];
+    let currentBlock: { uid: string | null; name: string; type?: string; lines: string[] } | null = null;
 
     const hasPageTags = /<!--\s*harpy:page\s+/i.test(cleanContent);
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+
+      // Ignore Callout Navigation block
+      if (line.match(/^>\s*\[!info\]\s*.*Navigation/i)) {
+        continue;
+      }
 
       // Regex matching invisible HTML page tag: <!-- harpy:page ... -->
       const pageTagMatch = line.match(/<!--\s*harpy:page\s+([^>]*?)-->/i);
@@ -286,24 +326,25 @@ export class VaultScanner {
         continue;
       }
 
-      // Matching Markdown header # Page Name
+      // Matching Markdown header # Page Name (only split on # if no harpy:page tags exist in file)
       if (line.startsWith("# ")) {
         const headerTitle = line.substring(2).trim();
 
-        if (currentBlock !== null) {
-          currentBlock = { uid: null, name: headerTitle, type: "standard", lines: [] };
-          pageBlocks.push(currentBlock);
-        } else {
-          if (headerTitle === displayName) {
-            // Main entity title header - skip
-          } else if (!hasPageTags) {
+        if (!hasPageTags) {
+          if (headerTitle !== displayName) {
             currentBlock = { uid: null, name: headerTitle, type: "standard", lines: [] };
             pageBlocks.push(currentBlock);
-          } else {
-            descriptionLines.push(line);
+            continue;
+          }
+        } else {
+          // With page tags present, # headers belong inside the current block or description
+          if (currentBlock !== null) {
+            currentBlock.lines.push(line);
+            continue;
+          } else if (headerTitle === displayName) {
+            continue;
           }
         }
-        continue;
       }
 
       if (currentBlock !== null) {

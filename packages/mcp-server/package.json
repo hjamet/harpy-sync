@@ -1,0 +1,37 @@
+{
+  "name": "@harpy/mcp-server",
+  "version": "0.1.0",
+  "description": "FastMCP Server & WebSocket Loopback Bridge for Harpy.gg and Obsidian Sync",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "harpy-mcp-server": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "fastmcp",
+    "harpy",
+    "bypp",
+    "obsidian",
+    "ttrpg",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@harpy/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.5.0",
+    "ws": "^8.16.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.3.3"
+  }
+}

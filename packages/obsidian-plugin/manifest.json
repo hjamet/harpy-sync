@@ -1,0 +1,10 @@
+{
+  "id": "harpy-sync",
+  "name": "Harpy Sync",
+  "version": "0.1.0",
+  "minAppVersion": "0.15.0",
+  "description": "Import, export and synchronize world-building notes and VTT data with Harpy using the .bypp format.",
+  "author": "Henri Jamet",
+  "authorUrl": "https://harpy.gg",
+  "isDesktopOnly": false
+}
