@@ -393,9 +393,22 @@ export class VaultAdapter {
           leadingLines.push(this.toObsidianLink(localAssetPath), "");
         }
 
-        // Description
+        // Description (Authentic extraction from Harpy only)
         if (entity.description) {
           leadingLines.push(entity.description, "");
+        }
+
+        // GM Notes / Secrets (Authentic extraction only, NEVER boilerplate or invented placeholders)
+        const gmSecrets = (entity as any).gmNotes || (entity as any).privateNotes || (entity as any).secrets || (entity as any).notes;
+        if (gmSecrets && typeof gmSecrets === "string" && gmSecrets.trim()) {
+          leadingLines.push(
+            '<!-- harpy:page {"displayName":"Secrets MJ & Coulisses"} -->',
+            "# Secrets MJ & Coulisses",
+            "",
+            "> [!warning] 🔒 **Secrets du Maître du Jeu**",
+            `> ${gmSecrets.trim()}`,
+            ""
+          );
         }
 
         // Character Sheets rendering

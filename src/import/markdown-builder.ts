@@ -356,6 +356,17 @@ export class MarkdownBuilder {
       }
     }
 
+    // GM Notes / Secrets (Authentic extraction only, NEVER boilerplate or invented placeholders)
+    const gmSecrets = (entity as any).gmNotes || (entity as any).privateNotes || (entity as any).secrets || (entity as any).notes;
+    if (gmSecrets && typeof gmSecrets === "string" && gmSecrets.trim()) {
+      lines.push('<!-- harpy:page {"displayName":"Secrets MJ & Coulisses"} -->');
+      lines.push("# Secrets MJ & Coulisses");
+      lines.push("");
+      lines.push("> [!warning] 🔒 **Secrets du Maître du Jeu**");
+      lines.push(`> ${cleanHtmlContent(gmSecrets.trim(), entity.data, this.index)}`);
+      lines.push("");
+    }
+
     // 4. Render Character Sheets ('fiches' / 'character sheets')
     await this.renderCharacterSheets(entity, lines);
 
