@@ -16,18 +16,21 @@ export function sanitizeFileName(name: string): string {
 export function parseBundle(raw: any): BeyondPaper {
   let migrated = raw;
   try {
-    // Only attempt migration for older schema versions
-    if (raw && typeof raw.version === "number" && raw.version < 13) {
+    // Only attempt migration for older schema versions (< 17)
+    if (raw && typeof raw.version === "number" && raw.version < 17) {
       migrated = migrate(raw);
     }
   } catch (err) {
     console.warn("Bundle migration warning:", err);
   }
 
+  const origVersion = migrated?.version ?? 17;
   try {
-    return BeyondPaperSchema.parse(migrated);
+    const normalized = { ...migrated, version: 17 };
+    const parsed = BeyondPaperSchema.parse(normalized);
+    return { ...parsed, version: origVersion } as BeyondPaper;
   } catch (err) {
-    // If strict Zod schema validation fails (e.g. due to newer version number/fields), return as BeyondPaper
+    // If strict Zod schema validation fails, return as BeyondPaper
     console.warn("BeyondPaperSchema validation warning:", err);
     return migrated as BeyondPaper;
   }

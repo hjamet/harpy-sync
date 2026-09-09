@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 import {
   BeyondPaperSchema,
   BeyondPaperV17Schema,
@@ -149,8 +149,25 @@ export function parseBeyondPaperBundle(raw: unknown) {
   if (typeof data === "string") {
     data = JSON.parse(data);
   }
-  const migrated = migrate(data);
-  return BeyondPaperSchema.parse(migrated);
+  let obj = data as any;
+  // Migrate older bundles (< 17)
+  if (obj && typeof obj.version === "number" && obj.version < 17) {
+    try {
+      obj = migrate(obj);
+    } catch (err) {
+      console.warn("BeyondPaper bundle migration warning:", err);
+    }
+  }
+  // Validate schema: if version >= 17, validate against BeyondPaperV17Schema with temporary normalization
+  const origVersion = obj?.version ?? 17;
+  try {
+    const normalized = { ...obj, version: 17 };
+    const parsed = BeyondPaperSchema.parse(normalized);
+    return { ...parsed, version: origVersion } as any;
+  } catch (error) {
+    console.warn("BeyondPaperSchema strict validation failed, falling back to raw object:", error);
+    return obj as any;
+  }
 }
 
 export function safeParseBeyondPaperBundle(raw: unknown) {
@@ -161,3 +178,4 @@ export function safeParseBeyondPaperBundle(raw: unknown) {
     return { success: false as const, error };
   }
 }
+

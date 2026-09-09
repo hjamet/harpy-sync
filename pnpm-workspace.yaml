@@ -1,4 +1,4 @@
-﻿packages:
+packages:
   - 'packages/*'
 
 onlyBuiltDependencies:
@@ -12,3 +12,4 @@ allowBuilds:
   "esbuild@0.27.4": true
   "@esbuild/win32-x64@0.21.5": true
   "@esbuild/win32-x64@0.27.4": true
+  esbuild: set this to true or false

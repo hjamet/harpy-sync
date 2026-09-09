@@ -129,11 +129,14 @@ export class AssetManager {
       const fileName = `${cleanPrefix}_${urlHash}.${ext}`;
       const localPath = `${this.attachmentsFolder}/${fileName}`;
 
-      // Check if file already exists in vault
+      // Check if file already exists in vault with valid size (> 100 bytes)
       const exists = await this.app.vault.adapter.exists(localPath);
       if (exists) {
-        this.downloadCache.set(url, localPath);
-        return localPath;
+        const stat = await this.app.vault.adapter.stat(localPath);
+        if (stat && stat.size > 100) {
+          this.downloadCache.set(url, localPath);
+          return localPath;
+        }
       }
 
       // Write arrayBuffer to vault

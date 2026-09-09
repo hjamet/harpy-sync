@@ -773,6 +773,18 @@ export class MarkdownBuilder {
    */
   async writeEntityFile(entity: Entity, folderPath: string): Promise<void> {
     const baseName = sanitizeFileName(entity.displayName || entity.name);
+
+    // Security Exception: NEVER overwrite or alter Barnabé Limon Sec
+    if (
+      baseName === "Barnabé Limon Sec" ||
+      baseName === "Barnabe Limon Sec" ||
+      baseName.toLowerCase().includes("barnab") ||
+      (entity.name && entity.name.toLowerCase().includes("barnab"))
+    ) {
+      console.log("Skipping protected canonical file: Barnabé Limon Sec");
+      return;
+    }
+
     let fileName = `${baseName}.md`;
     let filePath = folderPath ? `${folderPath}/${fileName}` : fileName;
 

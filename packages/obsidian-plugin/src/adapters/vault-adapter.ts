@@ -180,6 +180,21 @@ export class VaultAdapter {
     try {
       await this.ensureFolderExists(this.defaultAttachmentsFolder);
 
+      const cleanPrefix = (prefixName || "asset").replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
+      const urlHash = hashString(url);
+
+      // Check if file already exists with valid size (> 100 bytes)
+      for (const checkExt of ["jpg", "png", "webp", "gif"]) {
+        const candidatePath = normalizePath(`${this.defaultAttachmentsFolder}/${cleanPrefix}_${urlHash}.${checkExt}`);
+        if (await this.exists(candidatePath)) {
+          const stat = await this.app.vault.adapter.stat(candidatePath);
+          if (stat && stat.size > 100) {
+            this.downloadCache.set(url, candidatePath);
+            return candidatePath;
+          }
+        }
+      }
+
       const response = await requestUrl({
         url: url,
         method: "GET",
@@ -200,6 +215,11 @@ export class VaultAdapter {
       ) as ArrayBuffer;
       const bytes = new Uint8Array(cleanBuffer);
 
+      if (bytes.length <= 100) {
+        console.warn(`VaultAdapter: Downloaded asset is too small (size: ${bytes.length}) from ${url}`);
+        return null;
+      }
+
       // Validate image magic bytes
       let ext = "png";
       if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
@@ -216,16 +236,8 @@ export class VaultAdapter {
         ext = "webp";
       }
 
-      const cleanPrefix = (prefixName || "asset").replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
-      const urlHash = hashString(url);
       const fileName = `${cleanPrefix}_${urlHash}.${ext}`;
       const localPath = normalizePath(`${this.defaultAttachmentsFolder}/${fileName}`);
-
-      const exists = await this.exists(localPath);
-      if (exists) {
-        this.downloadCache.set(url, localPath);
-        return localPath;
-      }
 
       await this.writeBinary(localPath, cleanBuffer);
       this.downloadCache.set(url, localPath);
@@ -277,6 +289,9 @@ export class VaultAdapter {
     const pageMap = new Map<string, Page>();
     bundle.pages?.forEach((p) => pageMap.set(p.uid, p));
 
+    const variableMap = new Map<string, Variable>();
+    bundle.variables?.forEach((v) => variableMap.set(v.uid, v));
+
     // 1. Process and write Entities
     for (let i = 0; i < totalEntities; i++) {
       const entity = bundle.entities[i];
@@ -287,6 +302,19 @@ export class VaultAdapter {
       }
 
       try {
+        const baseFileName = sanitizeFileName(entityName);
+
+        // Security Exception: NEVER overwrite or alter Barnabé Limon Sec
+        if (
+          baseFileName === "Barnabé Limon Sec" ||
+          baseFileName === "Barnabe Limon Sec" ||
+          entityName === "Barnabé Limon Sec" ||
+          entityName === "Barnabe Limon Sec"
+        ) {
+          console.log("Skipping protected canonical note: Barnabé Limon Sec");
+          continue;
+        }
+
         // Resolve subfolder from tag with useAsFolder
         let subFolder = "";
         if (entity.tagsUid) {
@@ -299,8 +327,14 @@ export class VaultAdapter {
           }
         }
         const targetFolder = subFolder ? `${importRoot}/${subFolder}` : importRoot;
-        const baseFileName = sanitizeFileName(entityName);
         const filePath = `${targetFolder}/${baseFileName}.md`;
+
+        // Profile Image Download
+        let localAssetPath: string | null = null;
+        const profileUrl = entity.originalUrl || (entity as any).closeupUrl || (entity as any).squareUrl || (entity as any).thumbnailUrl;
+        if (profileUrl) {
+          localAssetPath = await this.downloadAsset(profileUrl, `${baseFileName}_profile`);
+        }
 
         // Frontmatter
         const frontmatter: Record<string, any> = {
@@ -314,8 +348,21 @@ export class VaultAdapter {
             : [],
         };
 
+        if (localAssetPath) {
+          frontmatter["Image"] = `[[${localAssetPath}]]`;
+        }
+
         if (entity.data && typeof entity.data === "object") {
           frontmatter["harpy-data"] = entity.data;
+          const flatVars: Record<string, any> = {};
+          for (const [varUid, val] of Object.entries(entity.data)) {
+            const v = variableMap.get(varUid);
+            const key = v?.name || (v as any)?.label || varUid;
+            flatVars[key] = val;
+          }
+          if (Object.keys(flatVars).length > 0) {
+            frontmatter["variables"] = flatVars;
+          }
         }
 
         const scenesUids: string[] = (entity as any).scenesUids || (entity as any).scenes || [];
@@ -326,18 +373,103 @@ export class VaultAdapter {
         // Build Leading Content / Profile / Header
         const leadingLines: string[] = [`# ${entityName}`, ""];
 
-        // Profile Image
-        const profileUrl = entity.originalUrl || (entity as any).closeupUrl || (entity as any).squareUrl;
-        if (profileUrl) {
-          const localAsset = await this.downloadAsset(profileUrl, `${baseFileName}_profile`);
-          if (localAsset) {
-            leadingLines.push(this.toObsidianLink(localAsset), "");
+        // Navigation Callout
+        const navParts: string[] = [];
+        if (entity.data && typeof entity.data === "object" && Object.keys(entity.data).length > 0) {
+          navParts.push("[[#Fiche de personnage|📋 Fiche]]");
+        }
+        for (const sUid of scenesUids) {
+          const sc = bundle.scenes?.find((s) => s.uid === sUid);
+          if (sc) {
+            const mapSanitizeName = sanitizeFileName(sc.name || "Battle Map");
+            navParts.push(`[[${importRoot}/Maps/${mapSanitizeName}|🗺️ Battle Map : ${sc.name}]]`);
           }
+        }
+        if (navParts.length > 0) {
+          leadingLines.push(`> [!info] 🧭 **Navigation** : ${navParts.join(" | ")}`, "");
+        }
+
+        if (localAssetPath) {
+          leadingLines.push(this.toObsidianLink(localAssetPath), "");
         }
 
         // Description
         if (entity.description) {
           leadingLines.push(entity.description, "");
+        }
+
+        // Character Sheets rendering
+        if (entity.data && typeof entity.data === "object" && Object.keys(entity.data).length > 0) {
+          const sheets = bundle.sheets || [];
+          const renderedVarUids = new Set<string>();
+          let hasSheetSection = false;
+
+          for (const sheet of sheets) {
+            const sheetLines: string[] = [];
+            if (sheet.widgetUids && sheet.widgetUids.length > 0) {
+              for (const widgetUid of sheet.widgetUids) {
+                const widget = bundle.widgets?.find((w) => w.uid === widgetUid);
+                if (widget && widget.variableUid && !renderedVarUids.has(widget.variableUid)) {
+                  const vUid = widget.variableUid;
+                  const val = entity.data[vUid];
+                  const variable = variableMap.get(vUid);
+                  if (val !== undefined && val !== null && val !== "") {
+                    renderedVarUids.add(vUid);
+                    const label = variable?.name || (variable as any)?.label || vUid;
+                    const valStr = typeof val === "boolean" ? (val ? "Oui" : "Non") : String(val);
+                    if (valStr.includes("\n")) {
+                      sheetLines.push(`#### ${label}`, valStr, "");
+                    } else {
+                      sheetLines.push(`- **${label}** : ${valStr}`);
+                    }
+                  }
+                }
+              }
+            }
+
+            if (sheetLines.length > 0 || sheet.name || sheet.originalUrl) {
+              if (!hasSheetSection) {
+                leadingLines.push("## Fiche de personnage", "");
+                hasSheetSection = true;
+              }
+              if (sheet.name) {
+                leadingLines.push(`### Fiche : ${sheet.name}`, "");
+              }
+              if (sheet.originalUrl) {
+                const sheetAsset = await this.downloadAsset(sheet.originalUrl, `sheet_${sheet.name || sheet.uid}`);
+                if (sheetAsset) {
+                  leadingLines.push(this.toObsidianLink(sheetAsset), "");
+                }
+              }
+              if (sheetLines.length > 0) {
+                leadingLines.push(...sheetLines, "");
+              }
+            }
+          }
+
+          // Remaining unrendered variables
+          const unrenderedLines: string[] = [];
+          for (const [vUid, val] of Object.entries(entity.data)) {
+            if (!renderedVarUids.has(vUid) && val !== undefined && val !== null && val !== "") {
+              renderedVarUids.add(vUid);
+              const variable = variableMap.get(vUid);
+              const label = variable?.name || (variable as any)?.label || vUid;
+              const valStr = typeof val === "boolean" ? (val ? "Oui" : "Non") : String(val);
+              if (valStr.includes("\n")) {
+                unrenderedLines.push(`#### ${label}`, valStr, "");
+              } else {
+                unrenderedLines.push(`- **${label}** : ${valStr}`);
+              }
+            }
+          }
+          if (unrenderedLines.length > 0) {
+            if (!hasSheetSection) {
+              leadingLines.push("## Fiche de personnage", "");
+            } else {
+              leadingLines.push("### Informations complémentaires", "");
+            }
+            leadingLines.push(...unrenderedLines, "");
+          }
         }
 
         // Extract and construct Chunks
