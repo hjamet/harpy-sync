@@ -1,7 +1,7 @@
 import { z } from "zod";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { parseObsidianNote, computeEntityDiff } from "@harpy/core";
+import { parseObsidianNote, computeEntityDiff, validateHarpyEntityV3 } from "@harpy/core";
 import { HarpyWsBridge } from "../ws-bridge.js";
 
 export const syncObsidianNoteToHarpySchema = z.object({
@@ -77,6 +77,7 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
 
       // 1. Parse note with @harpy/core
       const parsedNote = parseObsidianNote(rawMarkdown, noteDefaultName);
+      const validationV3 = validateHarpyEntityV3(rawMarkdown, { entityName: parsedNote.name });
 
       // 2. Determine world and entity ID
       const activeState = bridge.getActiveTabState();
@@ -120,7 +121,8 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
             hasAvatar: Boolean(avatarCandidate),
             variablesCount: Object.keys(parsedNote.variables).length,
             chunksCount: parsedNote.chunks.length,
-            diffDetails: diff
+            diffDetails: diff,
+            validationV3
           };
         }
 
@@ -196,7 +198,8 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
           updatedFields: patchResult?.updatedFields ?? Object.keys(parsedNote.variables),
           avatarStatus: avatarResult,
           sheetStatus: sheetResult,
-          codexStatus: codexResult
+          codexStatus: codexResult,
+          validationV3
         };
       }
 
@@ -211,7 +214,8 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
           variablesCount: Object.keys(parsedNote.variables).length,
           chunksCount: parsedNote.chunks.length,
           hasAvatar: Boolean(avatarCandidate),
-          tags: parsedNote.tags
+          tags: parsedNote.tags,
+          validationV3
         };
       }
 
@@ -287,7 +291,8 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
         createdEntity: createResult?.entity ?? null,
         avatarStatus: avatarResult,
         sheetStatus: sheetResult,
-        codexStatus: codexResult
+        codexStatus: codexResult,
+        validationV3
       };
     }
   };
