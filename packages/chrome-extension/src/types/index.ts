@@ -209,8 +209,11 @@ export interface ExtensionRuntimeMessage {
     | "RECONNECT_WS"
     | "PING_WS"
     | "TEST_DOM_AUTOMATION"
-    | "LOG_MESSAGE";
+    | "LOG_MESSAGE"
+    | "RPC_REQUEST";
   payload?: any;
+  method?: string;
+  params?: any;
 }
 
 export interface PopupState {

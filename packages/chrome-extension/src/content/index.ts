@@ -754,6 +754,10 @@ class HarpyContentBridge {
           break;
 
         case "RPC_REQUEST":
+          if (!message.method) {
+            sendResponse({ success: false, error: "Method is required for RPC_REQUEST" });
+            return true;
+          }
           this.wsClient
             .executeHandler(message.method, message.params)
             .then((result) => sendResponse({ success: true, result }))
