@@ -5,5 +5,4 @@ export * from "./create-entity.js";
 export * from "./update-entity.js";
 export * from "./sync-note.js";
 export * from "./trigger-action.js";
-export * from "./validate-convert-v3.js";
 export * from "./validate-and-export-v3.js";

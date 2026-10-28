@@ -22,8 +22,6 @@ import {
   syncObsidianNoteToHarpySchema,
   createTriggerTableActionTool,
   triggerTableActionSchema,
-  createValidateAndConvertHarpyV3Tool,
-  validateAndConvertHarpyV3Schema,
   createValidateAndExportHarpyV3Tool,
   validateAndExportHarpyV3Schema
 } from "./tools/index.js";
@@ -64,7 +62,7 @@ export class HarpyMcpServer {
   }
 
   /**
-   * Registers the 7 standardized Harpy FastMCP tools.
+   * Registers the 8 standardized Harpy FastMCP tools.
    */
   private registerTools(): void {
     const t1 = createGetActiveHarpyTabStateTool(this.bridge);
@@ -74,8 +72,7 @@ export class HarpyMcpServer {
     const t5 = createUpdateHarpyEntityTool(this.bridge);
     const t6 = createSyncObsidianNoteToHarpyTool(this.bridge);
     const t7 = createTriggerTableActionTool(this.bridge);
-    const t8 = createValidateAndConvertHarpyV3Tool();
-    const t9 = createValidateAndExportHarpyV3Tool();
+    const t8 = createValidateAndExportHarpyV3Tool();
 
     this.tools.set(t1.name, t1);
     this.tools.set(t2.name, t2);
@@ -85,7 +82,6 @@ export class HarpyMcpServer {
     this.tools.set(t6.name, t6);
     this.tools.set(t7.name, t7);
     this.tools.set(t8.name, t8);
-    this.tools.set(t9.name, t9);
   }
 
   /**
@@ -352,41 +348,6 @@ export class HarpyMcpServer {
             }
           },
           {
-            name: "validate_and_convert_harpy_v3",
-            description:
-              "Validates an Obsidian Harpy v3 note offline (5 blocs, char length invariants, anti-leak checks) and optionally compiles it into a Beyond Paper (.bypp v17) bundle or Asharde 1/10/100 Scènes statblock without requiring an active Chrome tab.",
-            inputSchema: {
-              type: "object",
-              properties: {
-                filePath: {
-                  type: "string",
-                  description: "Absolute or relative file path to the Obsidian Markdown note"
-                },
-                markdownContent: {
-                  type: "string",
-                  description: "Raw Markdown content string (if filePath is not provided)"
-                },
-                entityName: {
-                  type: "string",
-                  description: "Optional entity name for validation checks. Defaults to filename or frontmatter."
-                },
-                generateBundle: {
-                  type: "boolean",
-                  description: "If true, generates a compliant BeyondPaperBundle (.bypp v17) JSON bundle (default: true)"
-                },
-                generateAshardeStatblock: {
-                  type: "boolean",
-                  description: "If true, generates an Asharde 1/10/100 Scènes Harpy Bloc 5 statblock (default: false)"
-                },
-                archetype: {
-                  type: "string",
-                  enum: ["arcaniste", "reveur", "autre"],
-                  description: "Asharde archetype for character sheet generation (default: reveur)"
-                }
-              }
-            }
-          },
-          {
             name: "validate_and_export_harpy_v3",
             description:
               "Validates an Obsidian Harpy v3 note offline (5 blocs, char length invariants, anti-leak checks) and optionally compiles it into a Beyond Paper (.bypp v17) bundle or Asharde 1/10/100 Scènes statblock without requiring an active Chrome tab.",
@@ -428,7 +389,9 @@ export class HarpyMcpServer {
     // 2. Call Tool Request
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const toolName = request.params.name;
-      const tool = this.tools.get(toolName);
+      const effectiveToolName =
+        toolName === "validate_and_convert_harpy_v3" ? "validate_and_export_harpy_v3" : toolName;
+      const tool = this.tools.get(effectiveToolName);
 
       if (!tool) {
         throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${toolName}`);

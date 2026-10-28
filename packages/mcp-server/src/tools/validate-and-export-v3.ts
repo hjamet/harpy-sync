@@ -42,6 +42,10 @@ export const validateAndExportHarpyV3Schema = z.object({
 
 export type ValidateAndExportHarpyV3Input = z.input<typeof validateAndExportHarpyV3Schema>;
 
+// Aliases for backward compatibility
+export const validateAndConvertHarpyV3Schema = validateAndExportHarpyV3Schema;
+export type ValidateAndConvertHarpyV3Input = ValidateAndExportHarpyV3Input;
+
 export function createValidateAndExportHarpyV3Tool() {
   return {
     name: "validate_and_export_harpy_v3",
@@ -195,3 +199,5 @@ export function createValidateAndExportHarpyV3Tool() {
     },
   };
 }
+
+export const createValidateAndConvertHarpyV3Tool = createValidateAndExportHarpyV3Tool;
