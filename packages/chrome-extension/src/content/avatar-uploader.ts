@@ -289,7 +289,7 @@ export class AvatarUploader {
       byteArrays.push(new Uint8Array(byteNumbers));
     }
 
-    const blob = new Blob(byteArrays, { type: mimeType });
+    const blob = new Blob(byteArrays as BlobPart[], { type: mimeType });
     return new File([blob], fileName, { type: mimeType, lastModified: Date.now() });
   }
 

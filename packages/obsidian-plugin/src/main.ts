@@ -49,8 +49,49 @@ export default class HarpySyncPlugin extends Plugin {
       },
     });
 
-    // 5. Register Settings Tab
+    // 5. Command: Validate active note against Harpy v3 standard
+    this.addCommand({
+      id: "validate-harpy-v3-note",
+      name: "Validate active note against Harpy v3 standard",
+      checkCallback: (checking: boolean) => {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (activeFile && activeFile.extension === "md") {
+          if (!checking) {
+            this.validateActiveNote(activeFile);
+          }
+          return true;
+        }
+        return false;
+      },
+    });
+
+    // 6. Register Settings Tab
     this.addSettingTab(new HarpySyncSettingTab(this.app, this));
+  }
+
+  async validateActiveNote(file: import("obsidian").TFile) {
+    try {
+      const content = await this.app.vault.read(file);
+      const { validateHarpyV3Markdown } = await import("@harpy/core");
+      const result = validateHarpyV3Markdown(content, { entityName: file.basename });
+
+      if (result.valid) {
+        let msg = `✅ Note '${file.basename}' is strictly valid according to Harpy v3!`;
+        if (result.warnings.length > 0) {
+          msg += `\n⚠️ ${result.warnings.length} warning(s):\n- ${result.warnings.join("\n- ")}`;
+        }
+        new Notice(msg, 7000);
+      } else {
+        const errorList = result.errors.map((e) => `• ${e}`).join("\n");
+        let msg = `❌ Note '${file.basename}' failed Harpy v3 validation:\n${errorList}`;
+        if (result.warnings.length > 0) {
+          msg += `\n⚠️ Warnings:\n${result.warnings.map((w) => `• ${w}`).join("\n")}`;
+        }
+        new Notice(msg, 10000);
+      }
+    } catch (err: any) {
+      new Notice(`Error validating Harpy v3 note: ${err?.message || String(err)}`, 7000);
+    }
   }
 
   onunload() {

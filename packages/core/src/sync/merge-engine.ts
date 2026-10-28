@@ -1,4 +1,4 @@
-﻿import type { Chunk, Entity } from "../bypp/types.js";
+import type { Chunk, Entity } from "../bypp/types.js";
 
 export type SyncAction = "NO_CHANGE" | "USE_LOCAL" | "USE_REMOTE" | "MERGE_REQUIRED";
 
@@ -85,13 +85,18 @@ export function determineSyncAction(
 /**
  * Formats git-style conflict markers for divergent text.
  */
-export function formatConflictMarkers(localText: string, remoteText: string): string {
+export function formatConflictMarkers(
+  localText: string,
+  remoteText: string,
+  localLabel: string = "LOCAL",
+  remoteLabel: string = "REMOTE"
+): string {
   return [
-    "<<<<<<< LOCAL",
+    `<<<<<<< ${localLabel}`,
     localText.trim(),
     "=======",
     remoteText.trim(),
-    ">>>>>>> REMOTE",
+    `>>>>>>> ${remoteLabel}`,
   ].join("\n");
 }
 

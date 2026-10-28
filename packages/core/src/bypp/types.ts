@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   EntityUid,
   PageUid,
   ChunkUid,
@@ -99,3 +99,5 @@ export type {
   ByppScene,
   ByppAsset,
 };
+
+export type BeyondPaperBundle = BeyondPaper;

@@ -173,6 +173,12 @@ export function validateHarpyEntityV3(
   const blocks = parseHarpyEntityV3(markdown);
 
   // Contrôle 1 : Zéro mention de source
+  // On ignore le titre officiel standardisé H3 généré par harpy_entity_validator.py
+  const textToCheckSources = markdown.replace(
+    /###\s+🗝️\s+Quels sont les secrets inavouables,\s+le statut canonique et les liaisons d'intrigue\s*\?/gi,
+    ""
+  );
+
   const forbiddenSources: [RegExp, string][] = [
     [/\(canon\)/i, "Mention '(canon)'"],
     [/\(proposition\s+mj\)/i, "Mention '(proposition MJ)'"],
@@ -186,7 +192,7 @@ export function validateHarpyEntityV3(
   ];
 
   for (const [pattern, label] of forbiddenSources) {
-    if (pattern.test(markdown)) {
+    if (pattern.test(textToCheckSources)) {
       errors.push(`Mention de source interdite détectée [${label}] -> Aucune mention de source ne doit figurer dans la note (traçabilité réservée au rapport).`);
     }
   }
@@ -286,3 +292,5 @@ export function validateHarpyEntityV3(
     blocks,
   };
 }
+
+export const validateHarpyV3Markdown = validateHarpyEntityV3;

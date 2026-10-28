@@ -201,17 +201,24 @@ export interface WsClientOptions {
 // 6. Extension Runtime & Popup Types
 // ==========================================
 
-export interface ExtensionRuntimeMessage {
-  type:
-    | "GET_STATUS"
-    | "STATUS_UPDATE"
-    | "EXTRACT_TOKEN"
-    | "RECONNECT_WS"
-    | "PING_WS"
-    | "TEST_DOM_AUTOMATION"
-    | "LOG_MESSAGE";
-  payload?: any;
-}
+export type ExtensionRuntimeMessage =
+  | {
+      type:
+        | "GET_STATUS"
+        | "STATUS_UPDATE"
+        | "EXTRACT_TOKEN"
+        | "RECONNECT_WS"
+        | "PING_WS"
+        | "TEST_DOM_AUTOMATION"
+        | "LOG_MESSAGE";
+      payload?: any;
+    }
+  | {
+      type: "RPC_REQUEST";
+      id?: string;
+      method: string;
+      params?: Record<string, unknown>;
+    };
 
 export interface PopupState {
   wsStatus: WsConnectionStatus;

@@ -34,7 +34,7 @@ export class HarpyWsClient {
     {
       resolve: (result: any) => void;
       reject: (error: any) => void;
-      timeout: number;
+      timeout: ReturnType<typeof setTimeout> | number;
     }
   > = new Map();
 
