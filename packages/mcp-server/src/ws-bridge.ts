@@ -185,7 +185,7 @@ export class HarpyWsBridge {
       msg.method === "harpy.tabState" ||
       msg.method === "harpy/tabState"
     ) {
-      const state = msg.params || msg.state || msg;
+      const state = msg.params || msg.state || msg.payload || msg;
       client.tabId = state.tabId ?? client.tabId;
       client.url = state.url ?? client.url;
       client.worldId = state.worldId ?? client.worldId;
