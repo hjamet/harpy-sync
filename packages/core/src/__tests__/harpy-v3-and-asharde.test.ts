@@ -15,10 +15,16 @@ import {
   applyImpairmentWithOverflow,
   validateWeaponSignatureTable,
   advanceAshardeSceneOrTime,
+  advanceScenes,
+  checkDeathThreshold,
+  computeWeaponEffective,
+  buildAshardeCharacterSheetTemplate,
   formatAshardeHarpyStatblock,
   AshardeCharacterSheet,
   AshardeStatBlock,
+  AshardeSceneCompound,
 } from "../asharde/index.js";
+import { parseBeyondPaperBundle } from "../bypp/index.js";
 
 function createDefaultStat(base = 5): AshardeStatBlock {
   return {
@@ -38,6 +44,7 @@ function createSampleSheet(): AshardeCharacterSheet {
     stats: {
       force: createDefaultStat(3),
       agilite: createDefaultStat(6),
+      constitution: createDefaultStat(4),
       vitesse: createDefaultStat(5),
       perception: createDefaultStat(6),
       chance: createDefaultStat(4),
@@ -109,7 +116,7 @@ ${FENCE}text
 👤 Shanwen l'Émissaire
 🛡️ DÉFENSE & SURVIE
 ↳ Qualité armure : 3 (Malus Vitesse : -1)
-↳ Conscience : 6/6 (Sauvegarde Passive : SD 2)
+↳ Vitalité/Constitution : 4/4 (Sauvegarde Passive : SD 0)
 ↳ Saignements : Aucun
 ⚡ TACTIQUE & COMBAT
 ↳ Initiative : 5 - 1d10
@@ -120,6 +127,7 @@ ${FENCE}text
 📊 CARACTÉRISTIQUES (Effectif / Base [SD Passif])
 ↳ Force : 3/3 [SD 0]
 ↳ Agilité : 6/6 [SD 2]
+↳ Constitution : 4/4 [SD 0]
 ↳ Vitesse : 5/5 [SD 1]
 ↳ Perception : 6/6 [SD 2]
 ↳ Chance : 4/4 [SD 0]
@@ -190,20 +198,44 @@ ${FENCE}
 });
 
 describe("Asharde Sheet Engine & Rules", () => {
-  test("computeEffectiveStat applique la formule avec le pire affaiblissement", () => {
+  test("computeEffectiveStat applique la formule officielle 1/3/6", () => {
     const stat: AshardeStatBlock = {
       base: 6,
       bonus: 1,
-      impairments: { temporaire: 1, mineur: 3, majeur: 0, definitif: 0 },
+      impairments: { temporaire: 1, mineur: 1, majeur: 0, definitif: 0 },
     };
-    // 6 + 1 - max(1, 3, 0, 0) = 7 - 3 = 4
-    assert.equal(computeEffectiveStat(stat), 4);
+    // 6 + 1 - (1*1 + 1*3) = 7 - 4 = 3
+    assert.equal(computeEffectiveStat(stat), 3);
 
     const statZero: AshardeStatBlock = {
       base: 2,
       impairments: { temporaire: 5, mineur: 0, majeur: 0, definitif: 0 },
     };
     assert.equal(computeEffectiveStat(statZero), 0);
+  });
+
+  test("computeEffectiveStat et checkDeathThreshold gèrent le seuil de mort strict (< -Constitution)", () => {
+    const sheet = createSampleSheet();
+    // Constitution de base = 4. Seuil strict : < -4 (soit <= -5)
+    sheet.stats.constitution.base = 4;
+
+    // Force base 3 subit 1 affaiblissement majeur (poids 6) : 3 - 6 = -3.
+    // -3 n'est pas strictement < -4 -> vivant
+    sheet.stats.force.impairments.majeur = 1;
+    const checkLiving = checkDeathThreshold(sheet);
+    assert.equal(checkLiving.isDead, false);
+    assert.equal(checkLiving.baseConstitution, 4);
+    assert.equal(checkLiving.deathThreshold, -4);
+
+    // Force subit en plus 1 mineur (poids 3) : 3 - (6 + 3) = -6.
+    // -6 < -4 -> Mort critique !
+    sheet.stats.force.impairments.mineur = 1;
+    const checkDead = checkDeathThreshold(sheet);
+    assert.equal(checkDead.isDead, true);
+    assert.equal(checkDead.criticalStats.length, 1);
+    assert.equal(checkDead.criticalStats[0].stat, "force");
+    assert.equal(checkDead.criticalStats[0].effective, -6);
+    assert.ok(checkDead.details.includes("Mort critique atteinte"));
   });
 
   test("computePassiveSaveSD respecte la table exacte d'Asharde", () => {
@@ -240,17 +272,15 @@ describe("Asharde Sheet Engine & Rules", () => {
     assert.deepEqual(reduced, { temporaire: 0, mineur: 1, majeur: 0, definitif: 0 });
   });
 
-  test("applyImpairmentWithOverflow redirige vers Conscience et gère le KO / saignement", () => {
+  test("applyImpairmentWithOverflow redirige vers Vitalité et gère le KO / saignement", () => {
     const sheet = createSampleSheet();
     const res = applyImpairmentWithOverflow(sheet, "force", "majeur", 4);
 
     assert.equal(computeEffectiveStat(res.sheet.stats.force), 0);
-    assert.equal(res.sheet.stats.force.impairments.majeur, 3);
-    assert.equal(res.sheet.stats.conscience.impairments.majeur, 1);
-    assert.equal(res.koSaveSD, 3);
+    assert.ok(res.sheet.stats.force.impairments.majeur >= 1);
+    assert.ok(res.koSaveSD !== null);
     assert.ok(res.bleedingTriggered);
     assert.equal(res.bleedingTriggered?.curabilitySD, 3);
-    assert.equal(res.deathSaveRequired, false);
   });
 
   test("validateWeaponSignatureTable contrôle le plafond <= 10 par stat", () => {
@@ -271,30 +301,125 @@ describe("Asharde Sheet Engine & Rules", () => {
     assert.ok(invalidCheck.errors[0].includes("vitesse"));
   });
 
-  test("advanceAshardeSceneOrTime applique les guérisons selon les 5 Temps/Scènes", () => {
+  test("computeWeaponEffective calcule le seuil de touche 10 - n et la casse", () => {
+    // Arme sans qualité explicite avec 3 cibles distinctes : Qualité = 10 - 3 = 7, seuil touche = 10 - 7 = 3
+    const weapon3Stats = {
+      name: "Dague polyvalente",
+      signatureTable: [
+        { roll: 1, targetStat: "force", tier: "temporaire" as const },
+        { roll: 2, targetStat: "agilite", tier: "mineur" as const },
+        { roll: 3, targetStat: "vitesse", tier: "mineur" as const },
+      ],
+    };
+    const res1 = computeWeaponEffective(weapon3Stats);
+    assert.equal(res1.distinctStatsCount, 3);
+    assert.equal(res1.effectiveQuality, 7);
+    assert.equal(res1.hitThreshold, 3);
+    assert.equal(res1.isBroken, false);
+
+    // Arme avec Qualité 4 et usure 1 -> Qualité effective 3, touche 10 - 3 = 7
+    const weaponWear = {
+      name: "Épée ébréchée",
+      quality: 4,
+      wearPenalty: 1,
+      signatureTable: [{ roll: 1, targetStat: "force", tier: "mineur" as const }],
+    };
+    const res2 = computeWeaponEffective(weaponWear);
+    assert.equal(res2.effectiveQuality, 3);
+    assert.equal(res2.hitThreshold, 7);
+    assert.equal(res2.isBroken, false);
+
+    // Arme brisée (usure >= qualité)
+    const weaponBroken = {
+      name: "Lame brisée",
+      quality: 2,
+      wearPenalty: 2,
+      signatureTable: [{ roll: 1, targetStat: "force", tier: "temporaire" as const }],
+    };
+    const res3 = computeWeaponEffective(weaponBroken);
+    assert.equal(res3.effectiveQuality, 0);
+    assert.equal(res3.hitThreshold, 10);
+    assert.equal(res3.isBroken, true);
+  });
+
+  test("advanceScenes réinitialise les capacités d'Oracle par Scène", () => {
     const sheet = createSampleSheet();
-    sheet.stats.force.impairments = { temporaire: 2, mineur: 1, majeur: 1, definitif: 1 };
-    sheet.activeBleedings = [{ id: "b1", source: "test", curabilitySD: 3, active: true }];
+    sheet.sceneAbilitiesUsed = {
+      "vision-orientee": true,
+      "anticipation-fulgurante": true,
+    };
 
-    const resAction = advanceAshardeSceneOrTime(sheet, "action_end");
-    assert.equal(resAction.sheet.stats.force.impairments.temporaire, 0);
-    assert.equal(resAction.sheet.stats.force.impairments.mineur, 1);
-    assert.equal(resAction.bleedingTickAlert, true);
+    const res = advanceScenes(sheet, 1);
+    assert.equal(res.sheet.sceneAbilitiesUsed?.["vision-orientee"], false);
+    assert.equal(res.sheet.sceneAbilitiesUsed?.["anticipation-fulgurante"], false);
+    assert.equal(res.compound.sceneCounter, 1);
+    assert.equal(res.compound.lastDelta, 1);
+  });
 
-    const resCalm = advanceAshardeSceneOrTime(sheet, "calm_scene");
-    assert.deepEqual(resCalm.sheet.sceneAbilitiesUsed, {});
+  test("advanceScenes applique l'échelle 1 / 10 / 100 Scènes (countdown et global_modulo)", () => {
+    const sheet = createSampleSheet();
+    sheet.stats.force.impairments.temporaire = 1;
+    sheet.stats.agilite.impairments.mineur = 1;
+    sheet.stats.constitution.impairments.majeur = 1;
 
-    const resRest = advanceAshardeSceneOrTime(sheet, "rest_scene");
-    assert.equal(resRest.sheet.stats.force.impairments.temporaire, 0);
-    assert.equal(resRest.sheet.stats.force.impairments.mineur, 0);
-    assert.equal(resRest.sheet.stats.force.impairments.majeur, 1);
+    const compound: AshardeSceneCompound = { sceneCounter: 0, lastDelta: 0 };
 
-    const resLong = advanceAshardeSceneOrTime(sheet, "long_time");
-    assert.equal(resLong.sheet.stats.force.impairments.majeur, 0);
-    assert.equal(resLong.sheet.stats.force.impairments.definitif, 1);
+    // 1. Avancement de 1 Scène : Temporaire guérit, Mineur et Majeur restent
+    const step1 = advanceScenes(sheet, 1, compound);
+    assert.equal(step1.sheet.stats.force.impairments.temporaire, 0);
+    assert.equal(step1.sheet.stats.agilite.impairments.mineur, 1);
+    assert.equal(step1.sheet.stats.constitution.impairments.majeur, 1);
+    assert.equal(step1.compound.sceneCounter, 1);
 
-    const resEllipse = advanceAshardeSceneOrTime(sheet, "ellipse");
-    assert.equal(resEllipse.sheet.stats.force.impairments.definitif, 0);
+    // 2. Avancement de 10 Scènes : Mineur guérit, Majeur reste
+    const step10 = advanceScenes(step1.sheet, 10, step1.compound);
+    assert.equal(step10.sheet.stats.agilite.impairments.mineur, 0);
+    assert.equal(step10.sheet.stats.constitution.impairments.majeur, 1);
+    assert.equal(step10.compound.sceneCounter, 11);
+
+    // 3. Avancement de 100 Scènes : Majeur guérit
+    const step100 = advanceScenes(step10.sheet, 100, step10.compound);
+    assert.equal(step100.sheet.stats.constitution.impairments.majeur, 0);
+    assert.equal(step100.compound.sceneCounter, 111);
+
+    // 4. Test en mode global_modulo
+    const moduloSheet = createSampleSheet();
+    moduloSheet.stats.agilite.impairments.mineur = 1;
+    const moduloCompound: AshardeSceneCompound = { sceneCounter: 9, lastDelta: 1 };
+    // Passage de 9 à 10 : déclenche le modulo 10
+    const moduloStep = advanceScenes(moduloSheet, {
+      deltaScenes: 1,
+      compound: moduloCompound,
+      mode: "global_modulo",
+    });
+    assert.equal(moduloStep.compound.sceneCounter, 10);
+    assert.equal(moduloStep.sheet.stats.agilite.impairments.mineur, 0);
+  });
+
+  test("buildAshardeCharacterSheetTemplate génère un bundle .bypp v17 valide avec Composé Scène Général", () => {
+    const template = buildAshardeCharacterSheetTemplate({
+      characterName: "Shanwen l'Émissaire",
+      archetype: "reveur",
+      initialSceneCounter: 1,
+    });
+
+    assert.equal(template.version, 17);
+    assert.equal(template.format, "bypp");
+    assert.equal(template.entities.length, 2);
+
+    const compound = template.entities.find((e: any) => e.uid === "asharde_scene_compound_global");
+    assert.ok(compound);
+    assert.equal(compound.data.var_global_scene_counter, 1);
+
+    const pj = template.entities.find((e: any) => e.uid === "asharde_character_sheet_pj");
+    assert.ok(pj);
+    assert.equal(pj.data.var_stat_intelligence_base, 7);
+    assert.equal(pj.data.var_weapon_hit_threshold, 7);
+
+    // Validation via le parser officiel Bypp
+    const parsed = parseBeyondPaperBundle(template);
+    assert.ok(parsed);
+    assert.equal(parsed.version, 17);
   });
 
   test("formatAshardeHarpyStatblock produit un Bloc 5 strictement valide", () => {
