@@ -277,7 +277,7 @@ export class AvatarUploader {
   public static base64ToFile(base64Data: string, fileName: string, mimeType = "image/png"): File {
     const cleanBase64 = base64Data.replace(/^data:image\/[a-zA-Z+]+;base64,/, "").trim();
     const byteCharacters = atob(cleanBase64);
-    const byteArrays: Uint8Array[] = [];
+    const byteArrays: BlobPart[] = [];
 
     const sliceSize = 1024;
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {

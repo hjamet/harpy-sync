@@ -348,6 +348,13 @@ export class VaultAdapter {
             : [],
         };
 
+        if ((entity as any).sheet_type || (entity as any).sheetType) {
+          frontmatter["sheet_type"] = (entity as any).sheet_type || (entity as any).sheetType;
+        }
+        if ((entity as any).connections && Array.isArray((entity as any).connections)) {
+          frontmatter["connections"] = (entity as any).connections;
+        }
+
         if (localAssetPath) {
           frontmatter["Image"] = `[[${localAssetPath}]]`;
         }
@@ -673,6 +680,9 @@ export class VaultAdapter {
         chunksOrder: pageChunksOrder,
       });
 
+      const sheetType = frontmatter["sheet_type"] || frontmatter["system"] || frontmatter["harpy-sheet"];
+      const connections = frontmatter["connections"];
+
       entities.push({
         uid: entityUid,
         name: sanitizeFileName(displayName),
@@ -682,6 +692,8 @@ export class VaultAdapter {
         type: entityType,
         pagesOrder: [pageUid],
         data: (frontmatter["harpy-data"] as Record<string, any>) || {},
+        sheet_type: sheetType,
+        connections: Array.isArray(connections) ? connections : undefined,
       } as any);
     }
 

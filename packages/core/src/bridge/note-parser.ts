@@ -1,6 +1,7 @@
 import { parseMarkdown } from "../markdown/parser.js";
 import { fromFirestoreValue, FirestoreValue } from "../firestore/mask-builder.js";
 import type { ParsedObsidianNote, ObsidianNotePage, EntityDiffResult } from "./types.js";
+import type { HarpyEntityConnection, HarpyConnectionKind } from "../connections/index.js";
 
 /**
  * Parses full Obsidian note pages, supporting multi-page delimiters (<!-- harpy:page ... -->)
@@ -146,7 +147,25 @@ export function parseObsidianNote(content: string, defaultName: string = "Untitl
   const uid = (fm["harpy-uid"] || fm["uid"]) as string | undefined;
   const worldUid = (fm["harpy-world"] || fm["worldId"]) as string | undefined;
   const type = ((fm["harpy-type"] || fm["type"]) as string) || "character";
+  const sheetType = (fm["sheet_type"] || fm["system"] || fm["harpy-sheet"]) as string | undefined;
   const folder = fm["folder"] as string | undefined;
+
+  const rawConnections = Array.isArray(fm["connections"]) ? fm["connections"] : [];
+  const connections: HarpyEntityConnection[] = rawConnections
+    .filter((c: any) => c && typeof c === "object")
+    .map((c: any, idx: number) => ({
+      connectionId: String(c.connectionId || c.id || `conn_${idx + 1}`),
+      sourceEntityUid: String(c.sourceEntityUid || uid || ""),
+      name: String(c.name || `Connexion ${idx + 1}`),
+      kind: (c.kind || "item") as HarpyConnectionKind,
+      equipped: c.equipped !== undefined ? Boolean(c.equipped) : undefined,
+      active: c.active !== undefined ? Boolean(c.active) : undefined,
+      weight: typeof c.weight === "number" ? c.weight : (c.weight ? Number(c.weight) : undefined),
+      quantity: typeof c.quantity === "number" ? c.quantity : (c.quantity ? Number(c.quantity) : undefined),
+      durationRounds: typeof c.durationRounds === "number" ? c.durationRounds : undefined,
+      statModifiers: c.statModifiers && typeof c.statModifiers === "object" ? c.statModifiers : undefined,
+      grantedActions: Array.isArray(c.grantedActions) ? c.grantedActions : undefined,
+    }));
 
   let tags: string[] = [];
   if (Array.isArray(fm["tags"])) {
@@ -169,6 +188,7 @@ export function parseObsidianNote(content: string, defaultName: string = "Untitl
 
   const systemKeys = new Set([
     "harpy-uid", "uid", "harpy-world", "worldId", "harpy-type", "type",
+    "sheet_type", "system", "harpy-sheet", "connections",
     "folder", "tags", "variables", "harpy-last-sync", "aliases", "title", "name"
   ]);
 
@@ -204,6 +224,8 @@ export function parseObsidianNote(content: string, defaultName: string = "Untitl
     uid,
     worldUid,
     type,
+    sheetType,
+    connections,
     folder,
     tags,
     variables,
@@ -272,6 +294,22 @@ export function computeEntityDiff(
     }
   }
 
+  // Vérification des connexions
+  const remoteConns: any[] = Array.isArray(remoteEntity?.connections)
+    ? remoteEntity.connections
+    : [];
+  const localConnIds = (localNote.connections || []).map((c) => c.connectionId);
+  const remoteConnIds = remoteConns.map((c: any) => c.connectionId || c.id);
+  const connectionsChanged =
+    (localNote.connections?.length || 0) !== remoteConns.length ||
+    localConnIds.some((id, i) => id !== remoteConnIds[i]);
+
+  if (connectionsChanged) {
+    diffSummary.push(
+      `Connections changed: ${remoteConns.length} remote -> ${localNote.connections?.length || 0} local`
+    );
+  }
+
   const hasDiff =
     nameChanged ||
     typeChanged ||
@@ -279,7 +317,8 @@ export function computeEntityDiff(
     tagsAdded.length > 0 ||
     tagsRemoved.length > 0 ||
     Object.keys(variablesModified).length > 0 ||
-    Object.keys(variablesAdded).length > 0;
+    Object.keys(variablesAdded).length > 0 ||
+    connectionsChanged;
 
   return {
     hasDiff,
@@ -298,6 +337,7 @@ export function computeEntityDiff(
     variablesAdded,
     variablesRemoved,
     chunksModified: false,
+    connectionsChanged,
     diffSummary,
   };
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { parseObsidianNote, computeEntityDiff, validateHarpyEntityV3 } from "@harpy/core";
+import { parseObsidianNote, computeEntityDiff, validateHarpyEntityV3, resolveEntityConnections } from "@harpy/core";
 import { HarpyWsBridge } from "../ws-bridge.js";
 
 export const syncObsidianNoteToHarpySchema = z.object({
@@ -78,6 +78,11 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
       // 1. Parse note with @harpy/core
       const parsedNote = parseObsidianNote(rawMarkdown, noteDefaultName);
       const validationV3 = validateHarpyEntityV3(rawMarkdown, { entityName: parsedNote.name });
+      const resolvedConnections = resolveEntityConnections(
+        parsedNote.variables,
+        parsedNote.connections,
+        { computePf1eEncumbrance: parsedNote.sheetType !== "asharde_pc" }
+      );
 
       // 2. Determine world and entity ID
       const activeState = bridge.getActiveTabState();
@@ -119,9 +124,10 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
             hasDiff: diff.hasDiff,
             diffSummary: diff.diffSummary,
             hasAvatar: Boolean(avatarCandidate),
-            variablesCount: Object.keys(parsedNote.variables).length,
+            variablesCount: Object.keys(resolvedConnections.effectiveVariables).length,
             chunksCount: parsedNote.chunks.length,
             diffDetails: diff,
+            connections: resolvedConnections,
             validationV3
           };
         }
@@ -135,7 +141,7 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
             name: parsedNote.name,
             folder: parsedNote.folder,
             tags: parsedNote.tags,
-            variables: parsedNote.variables,
+            variables: resolvedConnections.effectiveVariables,
             content: parsedNote.cleanBody
           });
         }
@@ -151,13 +157,13 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
           }
         }
 
-        // 5. Run Pathfinder 1e Sheet Sync Module
+        // 5. Run Pathfinder 1e or Asharde Sheet Sync Module
         let sheetResult: any = null;
-        if (input.syncSheet !== false && Object.keys(parsedNote.variables).length > 0) {
+        if (input.syncSheet !== false && Object.keys(resolvedConnections.effectiveVariables).length > 0) {
           try {
             sheetResult = await bridge.sendRpcRequest("harpy/syncSheet", {
-              variables: parsedNote.variables,
-              system: "pathfinder1e"
+              variables: resolvedConnections.effectiveVariables,
+              system: parsedNote.sheetType || "pathfinder1e"
             });
           } catch (sheetErr: any) {
             console.warn(`[Harpy-MCP] Sheet sync failed: ${sheetErr.message}`);
@@ -195,7 +201,8 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
           worldId,
           url: `https://harpy.gg/worlds/${worldId}/entities/${entityId}`,
           diffSummary: diff.diffSummary,
-          updatedFields: patchResult?.updatedFields ?? Object.keys(parsedNote.variables),
+          updatedFields: patchResult?.updatedFields ?? Object.keys(resolvedConnections.effectiveVariables),
+          connections: resolvedConnections,
           avatarStatus: avatarResult,
           sheetStatus: sheetResult,
           codexStatus: codexResult,
@@ -211,10 +218,11 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
           wouldCreate: true,
           entityName: parsedNote.name,
           worldId,
-          variablesCount: Object.keys(parsedNote.variables).length,
+          variablesCount: Object.keys(resolvedConnections.effectiveVariables).length,
           chunksCount: parsedNote.chunks.length,
           hasAvatar: Boolean(avatarCandidate),
           tags: parsedNote.tags,
+          connections: resolvedConnections,
           validationV3
         };
       }
@@ -231,7 +239,7 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
         worldId,
         folder: parsedNote.folder,
         tags: parsedNote.tags,
-        variables: parsedNote.variables,
+        variables: resolvedConnections.effectiveVariables,
         content: parsedNote.cleanBody
       });
 
@@ -247,13 +255,13 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
         }
       }
 
-      // Run Sheet Sync
+      // Run Pathfinder 1e or Asharde Sheet Sync
       let sheetResult: any = null;
-      if (input.syncSheet !== false && Object.keys(parsedNote.variables).length > 0) {
+      if (input.syncSheet !== false && Object.keys(resolvedConnections.effectiveVariables).length > 0) {
         try {
           sheetResult = await bridge.sendRpcRequest("harpy/syncSheet", {
-            variables: parsedNote.variables,
-            system: "pathfinder1e"
+            variables: resolvedConnections.effectiveVariables,
+            system: parsedNote.sheetType || "pathfinder1e"
           });
         } catch (sheetErr: any) {
           sheetResult = { success: false, error: sheetErr.message };
@@ -289,6 +297,7 @@ export function createSyncObsidianNoteToHarpyTool(bridge: HarpyWsBridge) {
         worldId,
         url: `https://harpy.gg/worlds/${worldId}/entities/${newEntityId}`,
         createdEntity: createResult?.entity ?? null,
+        connections: resolvedConnections,
         avatarStatus: avatarResult,
         sheetStatus: sheetResult,
         codexStatus: codexResult,

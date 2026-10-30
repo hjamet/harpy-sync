@@ -116,9 +116,89 @@ const PATHFINDER_1E_STATS: StatDefinition[] = [
   },
 ];
 
+export const ASHARDE_STATS_DEFINITIONS: StatDefinition[] = [
+  {
+    canonicalKey: "force",
+    aliases: ["force", "for", "str", "strength"],
+    labels: ["Force", "FOR", "STR"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "agilite",
+    aliases: ["agilite", "agilité", "agi", "dex", "dexterite"],
+    labels: ["Agilité", "Agilite", "AGI"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "vitesse",
+    aliases: ["vitesse", "vit", "spd", "speed"],
+    labels: ["Vitesse", "VIT", "Speed"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "perception",
+    aliases: ["perception", "per", "wis"],
+    labels: ["Perception", "PER"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "chance",
+    aliases: ["chance", "cha_asharde", "lck", "luck"],
+    labels: ["Chance", "LCK"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "attractivite",
+    aliases: ["attractivite", "attractivité", "att", "charme"],
+    labels: ["Attractivité", "Attractivite", "ATT"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "autorite",
+    aliases: ["autorite", "autorité", "aut", "lead"],
+    labels: ["Autorité", "Autorite", "AUT"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "evolution",
+    aliases: ["evolution", "évolution", "evo"],
+    labels: ["Évolution", "Evolution", "EVO"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "intelligence",
+    aliases: ["intelligence", "int"],
+    labels: ["Intelligence", "INT"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "conscience",
+    aliases: ["conscience", "cns", "con_asharde", "pv_asharde"],
+    labels: ["Conscience", "CNS"],
+    isNumeric: true,
+  },
+  {
+    canonicalKey: "saignement",
+    aliases: ["saignement", "bleeding", "bleed"],
+    labels: ["Saignement", "Bleeding"],
+    isNumeric: false,
+  },
+  {
+    canonicalKey: "sauvegarde_passive",
+    aliases: ["sauvegarde_passive", "sauvegarde passive", "passive_save", "sauvegarde"],
+    labels: ["Sauvegarde Passive", "Sauvegarde"],
+    isNumeric: true,
+  },
+];
+
+export const ALL_SUPPORTED_STATS: StatDefinition[] = [
+  ...PATHFINDER_1E_STATS,
+  ...ASHARDE_STATS_DEFINITIONS,
+];
+
 export class SheetSync {
   /**
-   * Synchronizes Pathfinder 1e sheet variables into Harpy's character sheet drawer/view.
+   * Synchronizes Pathfinder 1e or Asharde sheet variables into Harpy's character sheet drawer/view.
    */
   public static async syncSheet(options: SheetSyncOptions): Promise<SheetSyncResult> {
     const timeoutMs = options.timeoutMs ?? 15000;
@@ -132,12 +212,12 @@ export class SheetSync {
       // 1. Ensure Character Sheet Drawer or Tab is open
       await this.ensureSheetDrawerOpen(timeoutMs);
 
-      // 2. Normalize and map variables to canonical Pathfinder definitions
+      // 2. Normalize and map variables to canonical definitions
       const normalizedMap = this.normalizeVariableInputs(rawVariables);
 
       // 3. Populate each mapped variable into the sheet DOM
       for (const [canonicalKey, value] of Object.entries(normalizedMap)) {
-        const statDef = PATHFINDER_1E_STATS.find((s) => s.canonicalKey === canonicalKey);
+        const statDef = ALL_SUPPORTED_STATS.find((s) => s.canonicalKey === canonicalKey);
         const success = await this.fillSheetField(statDef || { canonicalKey, aliases: [canonicalKey], labels: [canonicalKey], isNumeric: typeof value === "number" }, value);
 
         if (success) {
@@ -151,7 +231,7 @@ export class SheetSync {
 
       // Also process any custom unmapped variables
       for (const [k, v] of Object.entries(rawVariables)) {
-        const isStandard = PATHFINDER_1E_STATS.some((s) => s.aliases.includes(k.toLowerCase().trim()));
+        const isStandard = ALL_SUPPORTED_STATS.some((s) => s.aliases.includes(k.toLowerCase().trim()));
         if (!isStandard && !updatedVariables[k]) {
           const success = await this.fillGenericField(k, v);
           if (success) {
@@ -231,7 +311,7 @@ export class SheetSync {
       const cleanKey = key.toLowerCase().trim();
       let matchedCanonical: string | null = null;
 
-      for (const stat of PATHFINDER_1E_STATS) {
+      for (const stat of ALL_SUPPORTED_STATS) {
         if (stat.aliases.includes(cleanKey) || stat.canonicalKey === cleanKey) {
           matchedCanonical = stat.canonicalKey;
           break;

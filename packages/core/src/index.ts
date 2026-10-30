@@ -5,3 +5,4 @@ export * from "./sync/index.js";
 export * from "./bridge/index.js";
 export * from "./validator/index.js";
 export * from "./asharde/index.js";
+export * from "./connections/index.js";

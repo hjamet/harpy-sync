@@ -1,3 +1,5 @@
+import { HarpyEntityConnection } from "../connections/index.js";
+
 export const WS_BRIDGE_PORT = 18765;
 export const WS_BRIDGE_HOST = "127.0.0.1";
 
@@ -45,6 +47,8 @@ export interface ParsedObsidianNote {
   uid?: string;
   worldUid?: string;
   type: string;
+  sheetType?: string;
+  connections: HarpyEntityConnection[];
   folder?: string;
   tags: string[];
   variables: Record<string, string | number | boolean>;
@@ -72,5 +76,7 @@ export interface EntityDiffResult {
   variablesAdded: Record<string, unknown>;
   variablesRemoved: string[];
   chunksModified: boolean;
+  connectionsChanged?: boolean;
   diffSummary: string[];
 }
+
